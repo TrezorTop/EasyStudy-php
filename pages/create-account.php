@@ -7,9 +7,9 @@ if (isset($_POST['create-account-btn'])) {
     $password = $_POST['password'];
     $email = $_POST['email'];
 
-    $result = mysqli_query($link, "SELECT username FROM `users` WHERE username = '$username' OR email = '$email'");
+    $usernameMysqlResult = mysqli_query($link, "SELECT username FROM `users` WHERE username = '$username' OR email = '$email'");
 
-    if (mysqli_num_rows($result) < 1) {
+    if (mysqli_num_rows($usernameMysqlResult) < 1) {
 
         if (strlen($username) >= 3 && strlen($username) <= 32) {
 
@@ -40,7 +40,7 @@ if (isset($_POST['create-account-btn'])) {
         }
 
     } else {
-        echo "User already exists!";
+        echo "User already exists! Check your login or email address";
     }
 }
 
