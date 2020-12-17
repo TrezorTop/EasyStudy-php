@@ -7,19 +7,41 @@ if (isset($_POST['create-account-btn'])) {
     $password = $_POST['password'];
     $email = $_POST['email'];
 
-    $query = "INSERT INTO users VALUES (`id`, '$username', '$password', '$email')";
-
-    $result = mysqli_query($link, "SELECT username FROM `users` WHERE username = '$username'");
-
+    $result = mysqli_query($link, "SELECT username FROM `users` WHERE username = '$username' OR email = '$email'");
 
     if (mysqli_num_rows($result) < 1) {
-        mysqli_query($link, $query);
-    }
-    else {
+
+        if (strlen($username) >= 3 && strlen($username) <= 32) {
+
+            if (preg_match('/[a-zA-Z0-9_]+/', $username)) {
+
+                if (strlen($password) >= 6 && strlen($password) <= 60) {
+
+                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+                        $query = "INSERT INTO users VALUES (id, '$username', '$hashedPassword', '$email')";
+
+                        mysqli_query($link, $query);
+                        echo "Success";
+                    } else {
+                        echo "Invalid email!";
+                    }
+
+                } else {
+                    echo "Invalid password!";
+                }
+
+            } else {
+                echo "Invalid username characters (a-z A-Z 0-0 is only allowed)";
+            }
+
+        } else {
+            echo "Invalid username!";
+        }
+
+    } else {
         echo "User already exists!";
     }
-
-
 }
 
 ?>
@@ -29,5 +51,5 @@ if (isset($_POST['create-account-btn'])) {
     <input type="text" name="username" placeholder="Username"><br>
     <input type="password" name="password" placeholder="Password"><br>
     <input type="email" name="email" placeholder="example@mail.com"><br>
-    <input type="submit" name="create-account-btn" value="Create Account"><br>
+    <input type="submit" name="create-account-btn" value="Create Account">
 </form>

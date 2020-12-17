@@ -18,5 +18,3 @@ if (!$link) {
 //echo "Соединение с MySQL установлено!" . PHP_EOL;
 //echo "Информация о сервере: " . mysqli_get_host_info($link) . PHP_EOL;
 
-?>
-

@@ -1,0 +1,46 @@
+<?php
+
+include $_SERVER['DOCUMENT_ROOT'] . '/php/connect.php';
+
+if (isset($_POST['login'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    $usernameResult = mysqli_query($link, "SELECT username FROM `users` WHERE username = '$username'");
+
+    if (mysqli_num_rows($usernameResult) > 0) {
+        $passwordResult = mysqli_query($link, "SELECT password FROM `users` WHERE username = '$username'");
+        $passwordFormDB = mysqli_fetch_row($passwordResult)[0];
+
+        if (password_verify($password, $passwordFormDB)) {
+
+            $crypto_strong = True;
+            $token = bin2hex(openssl_random_pseudo_bytes(64, $crypto_strong));
+            $sha1Token = sha1($token);
+
+            $usernameIdResult = mysqli_query($link, "SELECT id FROM `users` WHERE username = '$username'");
+            $user_id = mysqli_fetch_row($usernameIdResult)[0];
+
+            mysqli_query($link, "INSERT INTO login_tokens VALUES (id, '$sha1Token', '$user_id')");
+
+            setcookie("SNID", $token, time() + 60 * 60 * 24 * 7, '/', NULL, NULL, TRUE);
+
+            echo "</br> Success!";
+
+        } else {
+            echo "Incorrect password!";
+        }
+
+    } else {
+        echo "User not registered";
+    }
+}
+
+?>
+
+<h1>Login to your account</h1>
+<form action="login.php" method="post">
+    <input type="text" name="username" placeholder="Username"><br>
+    <input type="password" name="password" placeholder="Password"><br>
+    <input type="submit" name="login" value="Login">
+</form>
