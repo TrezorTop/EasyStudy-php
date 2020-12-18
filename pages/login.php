@@ -16,7 +16,6 @@ if (isset($_POST['login-btn'])) {
 
             $crypto_strong = True;
             $token = bin2hex(openssl_random_pseudo_bytes(64, $crypto_strong));
-
             $sha1Token = sha1($token);
 
             $userIdMysqlResult = mysqli_query($link, "SELECT id FROM `users` WHERE username = '$username'");
