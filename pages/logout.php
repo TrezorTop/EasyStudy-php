@@ -13,8 +13,6 @@ if (isset($_POST['confirm-btn'])) {
 
         $userId = Login::isLoggedIn($link);
 
-        echo "user ID is " . "$userId";
-
         mysqli_query($link, "DELETE FROM login_tokens WHERE user_id = '$userId'");
 
         echo "<br> all devices";

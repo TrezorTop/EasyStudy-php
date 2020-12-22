@@ -19,7 +19,7 @@ if (isset($_POST['create-account-btn'])) {
 
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-                        $query = "INSERT INTO users VALUES (id, '$username', '$hashedPassword', '$email')";
+                        $query = "INSERT INTO users VALUES (id, '$username', '$hashedPassword', '$email', 0)";
 
                         mysqli_query($link, $query);
                         echo "Success";
