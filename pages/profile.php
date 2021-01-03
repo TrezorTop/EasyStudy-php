@@ -5,7 +5,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/classes/Login.php';
 
 $username = "";
 $verified = False;
-$isFollowing = False ;
+$isFollowing = False;
 
 if (isset($_GET['username'])) {
 
@@ -30,8 +30,7 @@ if (isset($_GET['username'])) {
                 $followerIdResult = mysqli_query($link, "SELECT follower_id FROM `followers` WHERE user_id = '$userId'");
                 if (mysqli_num_rows($followerIdResult) == 0) {
 
-
-                    if ($followerId == 5) {
+                    if ($followerId == 1) {
 
                         mysqli_query($link, "UPDATE `users` SET verified = 1 WHERE id = $userId");
                     }
@@ -46,13 +45,12 @@ if (isset($_GET['username'])) {
 
         if (isset($_POST['unfollow'])) {
 
-
             if ($userId != $followerId) {
 
                 $followerIdResult = mysqli_query($link, "SELECT follower_id FROM `followers` WHERE user_id = '$userId'");
                 if (mysqli_num_rows($followerIdResult) > 0) {
 
-                    if ($followerId == 5) {
+                    if ($followerId == 1) {
                         mysqli_query($link, "UPDATE `users` SET verified = 0 WHERE id = $userId");
                     }
                     mysqli_query($link, "DELETE FROM `followers` WHERE user_id = '$userId' AND follower_id = '$followerId'");
@@ -68,6 +66,25 @@ if (isset($_GET['username'])) {
             $isFollowing = True;
         }
 
+        if (isset($_POST['post'])) {
+            $postBody = $_POST['post-body'];
+            $userId = Login::isLoggedIn($link);
+
+            if (strlen($postBody) < 1 || strlen($postBody) > 257) {
+                die('Incorrect length!');
+            }
+
+            mysqli_query($link, "INSERT INTO `posts` VALUES (id, '$postBody', NOW(), '$userId', 0)");
+        }
+
+        $dbPostsResult = mysqli_query($link, "SELECT * FROM `posts` WHERE user_id = '$userId'");
+
+
+        foreach ($dbPostsResult as $post) {
+            $post = mysqli_fetch_assoc($dbPostsResult);
+            var_dump($post["posts"]);
+        }
+
     } else {
         die("Username not found!");
     }
@@ -76,12 +93,15 @@ if (isset($_GET['username'])) {
 
 ?>
 
-<h1><?php echo $username ?>'s Profile <?php if ($verified) { echo "Verified"; } ?></h1>
+<h1><?php echo $username ?>'s Profile <?php if ($verified) {
+        echo "Verified";
+    } ?></h1>
 
 <form action="profile.php?username=<?php echo $username ?>" method="post">
     <?php
 
-    if ($userId != $followerId) {
+    if ($userId != $followerId && $followerId != null) {
+
         if ($isFollowing) {
             echo '<input type="submit" name="unfollow" value="Unfollow">';
         } else {
@@ -92,6 +112,10 @@ if (isset($_GET['username'])) {
 </form>
 
 <form action="profile.php?username=<?php echo $username ?>" method="post">
-    <textarea name="post" cols="30" rows="8"></textarea>
-    <input type="submit">
+    <textarea name="post-body" cols="30" rows="8"></textarea>
+    <input type="submit" name="post" value="Post">
 </form>
+
+<div class="posts">
+    <?php echo $posts; ?>
+</div>

@@ -15,8 +15,6 @@ if (isset($_POST['confirm-btn'])) {
 
         mysqli_query($link, "DELETE FROM login_tokens WHERE user_id = '$userId'");
 
-        echo "<br> all devices";
-
     } else {
 
         if (isset($_COOKIE['SNID'])) {
