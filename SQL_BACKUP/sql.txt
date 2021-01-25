@@ -1,0 +1,29 @@
+// creating USERS table
+CREATE TABLE `social_network`.`users` ( `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT , `username` VARCHAR(32) NULL DEFAULT NULL , `password` VARCHAR(60) NULL DEFAULT NULL , `email` INT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+ALTER TABLE `users` ADD `verified` BOOLEAN NULL DEFAULT NULL AFTER `email`;
+
+ALTER TABLE `users` CHANGE `verified` `verified` TINYINT(1) NOT NULL DEFAULT '0';
+
+ALTER TABLE `users` CHANGE `email` `email` VARCHAR(64) NULL DEFAULT NULL;
+
+
+
+// creating LOGIN_TOKENS table
+CREATE TABLE `social_network`.`login_tokens` ( `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT , `token` CHAR(64) NOT NULL , `user_id` INT(11) UNSIGNED NOT NULL , PRIMARY KEY (`id`), UNIQUE (`token`)) ENGINE = InnoDB;
+
+ALTER TABLE `login_tokens` ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+
+// creating PASSWORD_TOKENS table
+CREATE TABLE `social_network`.`password_tokens` ( `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT , `token` CHAR(64) NOT NULL , `user_id` INT(11) UNSIGNED NOT NULL , PRIMARY KEY (`id`), UNIQUE (`token`)) ENGINE = InnoDB;
+
+
+// creating FOLLOWERS table
+CREATE TABLE `social_network`.`followers` ( `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT , `user_id` INT(11) UNSIGNED NOT NULL , `follower_id` INT(11) UNSIGNED NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+
+// creating POSTS table
+CREATE TABLE `social_network`.`posts` ( `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT , `body` VARCHAR(256) NOT NULL , `posted_at` DATETIME NOT NULL , `user_id` INT(11) UNSIGNED NOT NULL , `likes` INT(11) UNSIGNED NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+ALTER TABLE `posts` ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;

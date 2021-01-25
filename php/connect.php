@@ -3,7 +3,7 @@
 $host = "SocialNetwork";
 $user = "root";
 $password = "root";
-$database = "socialnetwork";
+$database = "social_network";
 
 $link = mysqli_connect($host, $user, $password, $database);
 

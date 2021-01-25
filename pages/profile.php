@@ -27,7 +27,7 @@ if (isset($_GET['username'])) {
 
             if ($userId != $followerId) {
 
-                $followerIdResult = mysqli_query($link, "SELECT follower_id FROM `followers` WHERE user_id = '$userId'");
+                $followerIdResult = mysqli_query($link, "SELECT follower_id FROM `followers` WHERE user_id = '$userId' AND follower_id = '$followerId'");
                 if (mysqli_num_rows($followerIdResult) == 0) {
 
                     if ($followerId == 1) {
@@ -47,7 +47,7 @@ if (isset($_GET['username'])) {
 
             if ($userId != $followerId) {
 
-                $followerIdResult = mysqli_query($link, "SELECT follower_id FROM `followers` WHERE user_id = '$userId'");
+                $followerIdResult = mysqli_query($link, "SELECT follower_id FROM `followers` WHERE user_id = '$userId' AND follower_id = '$followerId'");
                 if (mysqli_num_rows($followerIdResult) > 0) {
 
                     if ($followerId == 1) {
@@ -77,12 +77,12 @@ if (isset($_GET['username'])) {
             mysqli_query($link, "INSERT INTO `posts` VALUES (id, '$postBody', NOW(), '$userId', 0)");
         }
 
-        $dbPostsResult = mysqli_query($link, "SELECT * FROM `posts` WHERE user_id = '$userId'");
+        $dbPostsResult = mysqli_query($link, "SELECT * FROM `posts` WHERE user_id = '$userId' ORDER BY id DESC");
 
+        $posts = "";
 
         foreach ($dbPostsResult as $post) {
-            $post = mysqli_fetch_assoc($dbPostsResult);
-            var_dump($post["posts"]);
+            $posts .= $post['body'] . "<hr> <br>";
         }
 
     } else {
