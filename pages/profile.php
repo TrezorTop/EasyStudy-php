@@ -70,6 +70,7 @@ if (isset($_GET['username'])) {
             $postBody = $_POST['post-body'];
             $loggedInUserId = Login::isLoggedIn($link);
 
+
             if ($loggedInUserId == $userId) {
                 if (strlen($postBody) < 1 || strlen($postBody) > 257) {
                     die('Incorrect length!');
