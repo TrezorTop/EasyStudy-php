@@ -2,6 +2,7 @@
 
 include $_SERVER['DOCUMENT_ROOT'] . '/php/connect.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Login.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/classes/Post.php';
 
 $username = "";
 $verified = False;
@@ -67,62 +68,14 @@ if (isset($_GET['username'])) {
         }
 
         if (isset($_POST['post'])) {
-            $postBody = $_POST['post-body'];
-            $loggedInUserId = Login::isLoggedIn($link);
-
-
-            if ($loggedInUserId == $userId) {
-                if (strlen($postBody) < 1 || strlen($postBody) > 257) {
-                    die('Incorrect length!');
-                } else {
-                    mysqli_query($link, "INSERT INTO `posts` VALUES (id, '$postBody', NOW(), '$userId', 0)");
-                }
-            } else {
-                die("Incorrect User ");
-            }
-
+            Post::createPost($link, $_POST['post-body'], Login::isLoggedIn($link), $userId);
         }
 
         if (isset($_GET['postId'])) {
-            $postId = $_GET['postId'];
-            $userIdResult = mysqli_query($link, "SELECT user_id FROM post_likes WHERE post_id = '$postId' AND user_id = '$followerId'");
-            if (mysqli_num_rows($userIdResult) == 0) {
-                mysqli_query($link, "UPDATE posts SET likes = likes + 1 WHERE id = $postId");
-                mysqli_query($link, "INSERT INTO post_likes VALUES (id, '$postId', '$followerId')");
-            } else {
-                mysqli_query($link, "UPDATE posts SET likes = likes - 1 WHERE id = $postId");
-                mysqli_query($link, "DELETE FROM post_likes WHERE post_id = '$postId' and user_id = '$followerId'");
-            }
-
+            Post::likePost($link, $_GET['postId'], $followerId);
         }
 
-        $dbPostsResult = mysqli_query($link, "SELECT * FROM `posts` WHERE user_id = '$userId' ORDER BY id DESC");
-
-        $posts = "";
-
-        foreach ($dbPostsResult as $post) {
-
-            $postId = $post['id'];
-
-            $postIdResult = mysqli_query($link, "SELECT post_id FROM post_likes WHERE post_id = '$postId' and user_id = '$followerId'");
-
-            if (mysqli_num_rows($postIdResult) == 0) {
-                $posts .= htmlspecialchars($post['body']) . "
-                <form action=\"profile.php?username=$username&postId=" . $post['id'] . "\" method=\"post\">
-                    <input type=\"submit\" name=\"like\" value =\"Like\">
-                    <span> " . $post['likes'] . " likes </span>
-                </form>
-                <hr><br>";
-            } else {
-                $posts .= htmlspecialchars($post['body']) . "
-                <form action=\"profile.php?username=$username&postId=" . $post['id'] . "\" method=\"post\">
-                    <input type=\"submit\" name=\"unlike\" value =\"Unlike\">
-                    <span> " . $post['likes'] . " likes </span>
-                </form>
-                <hr><br>";
-            }
-
-        }
+        $posts = Post::displayPosts($link, $userId, $username, $followerId);
 
     } else {
         die("Username not found!");

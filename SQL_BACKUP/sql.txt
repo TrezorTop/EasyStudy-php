@@ -32,3 +32,16 @@ ALTER TABLE `posts` ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELE
 CREATE TABLE `social_network`.`post_likes` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `post_id` INT(11) UNSIGNED NOT NULL , `user_id` INT(11) UNSIGNED NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
 
 ALTER TABLE `post_likes` ADD FOREIGN KEY (`post_id`) REFERENCES `posts`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT; ALTER TABLE `post_likes` ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+
+// creating COMMENTS table
+CREATE TABLE `social_network`.`comments` ( `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT , `comment` TEXT NULL , `user_id` INT(11) NULL DEFAULT NULL , `date_posted` INT(11) NULL DEFAULT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+ALTER TABLE `comments` CHANGE `id` `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, CHANGE `comment` `comment` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL, CHANGE `user_id` `user_id` INT(11) UNSIGNED NOT NULL, CHANGE `date_posted` `posted_at` DATETIME NOT NULL;
+
+ALTER TABLE `comments` ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE `comments` ADD `post_id` INT(11) UNSIGNED NOT NULL AFTER `posted_at`;
+
+ALTER TABLE `comments` ADD FOREIGN KEY (`post_id`) REFERENCES `posts`(`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
