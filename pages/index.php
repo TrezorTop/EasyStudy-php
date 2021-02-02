@@ -21,11 +21,11 @@ if (isset($_POST['comment'])) {
 
 }
 
-$followingPosts = mysqli_query($link, 'SELECT posts.id, posts.body, posts.likes, users.`username` FROM users, posts, followers 
+$followingPosts = mysqli_query($link, "SELECT posts.id, posts.body, posts.likes, users.`username` FROM users, posts, followers 
                                              WHERE posts.user_id = followers.user_id
                                              AND users.id = posts.user_id
-                                             AND follower_id = 2
-                                             ORDER BY posts.likes DESC;');
+                                             AND follower_id = $userId
+                                             ORDER BY posts.likes DESC;");
 
 foreach ($followingPosts as $post) {
 
@@ -48,6 +48,11 @@ foreach ($followingPosts as $post) {
                 <textarea name=\"comment-body\" cols=\"30\" rows=\"3\"></textarea>
                 <input type=\"submit\" name=\"comment\" value=\"Comment\">
             </form>
+            ";
+
+    Comment::displayComments($link, $postId);
+
+    echo "
           <hr><br>";
 
 }
