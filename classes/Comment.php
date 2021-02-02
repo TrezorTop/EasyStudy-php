@@ -22,9 +22,10 @@ class Comment
     public static function displayComments($link, $postId)
     {
 
-        $comments = mysqli_query($link, "SELECT comments.comment, users.username FROM comments, users 
-                                                                  WHERE post_id = $postId
-                                                                  AND comments.user_id = users.id");
+        $comments = mysqli_query($link, "SELECT comments.comment, users.username 
+                                               FROM comments, users 
+                                               WHERE post_id = $postId
+                                               AND comments.user_id = users.id");
 
         foreach ($comments as $comment) {
             echo $comment['comment'] . "~" . $comment['username'] . '<hr>';
