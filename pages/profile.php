@@ -1,6 +1,6 @@
 <?php
 
-include $_SERVER['DOCUMENT_ROOT'] . '/php/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Login.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Post.php';
 
@@ -10,32 +10,24 @@ $isFollowing = False;
 
 if (isset($_GET['username'])) {
 
-    $getUsername = $_GET['username'];
-    $usernameMysqlResult = mysqli_query($link, "SELECT username FROM `users` WHERE username = '$getUsername'");
+    if (DB::query('SELECT username FROM users WHERE username=:username', array(':username' => $_GET['username']))) {
 
-
-    if (mysqli_num_rows($usernameMysqlResult) > 0) {
-
-        $username = mysqli_fetch_row($usernameMysqlResult)[0];
-        $userIdResult = mysqli_query($link, "SELECT id FROM `users` WHERE username = '$getUsername'");
-        $userId = mysqli_fetch_row($userIdResult)[0];
-        $verifiedResult = mysqli_query($link, "SELECT verified FROM `users` WHERE username = '$username'");
-        $verified = mysqli_fetch_row($verifiedResult)[0];
-        $followerId = Login::isLoggedIn($link);
-
+        $username = DB::query('SELECT username FROM users WHERE username=:username', array(':username' => $_GET['username']))[0]['username'];
+        $userId = DB::query('SELECT id FROM users WHERE username=:username', array(':username' => $_GET['username']))[0]['id'];
+        $verified = DB::query('SELECT verified FROM users WHERE username=:username', array(':username' => $_GET['username']))[0]['verified'];
+        $followerId = Login::isLoggedIn();
 
         if (isset($_POST['follow'])) {
 
             if ($userId != $followerId) {
 
-                $followerIdResult = mysqli_query($link, "SELECT follower_id FROM `followers` WHERE user_id = '$userId' AND follower_id = '$followerId'");
-                if (mysqli_num_rows($followerIdResult) == 0) {
+                if (!DB::query('SELECT follower_id FROM followers WHERE user_id=:userid AND follower_id=:followerid', array(':userid' => $userId, ':followerid' => $followerId))) {
 
                     if ($followerId == 1) {
 
-                        mysqli_query($link, "UPDATE `users` SET verified = 1 WHERE id = $userId");
+                        DB::query('UPDATE users SET verified=1 WHERE id=:userid', array(':userid' => $userId));
                     }
-                    mysqli_query($link, "INSERT INTO `followers` VALUES (id, '$userId', '$followerId')");
+                    DB::query('INSERT INTO followers VALUES (id, :userid, :followerid)', array(':userid' => $userId, ':followerid' => $followerId));
                 } else {
                     echo "Already following";
                 }
@@ -48,34 +40,32 @@ if (isset($_GET['username'])) {
 
             if ($userId != $followerId) {
 
-                $followerIdResult = mysqli_query($link, "SELECT follower_id FROM `followers` WHERE user_id = '$userId' AND follower_id = '$followerId'");
-                if (mysqli_num_rows($followerIdResult) > 0) {
+                if (DB::query('SELECT follower_id FROM followers WHERE user_id=:userid AND follower_id=:followerid', array(':userid' => $userId, ':followerid' => $followerId))) {
 
                     if ($followerId == 1) {
-                        mysqli_query($link, "UPDATE `users` SET verified = 0 WHERE id = $userId");
+                        DB::query('UPDATE users SET verified=0 WHERE id=:userid', array(':userid' => $userId));
                     }
-                    mysqli_query($link, "DELETE FROM `followers` WHERE user_id = '$userId' AND follower_id = '$followerId'");
+                    DB::query('DELETE FROM followers WHERE user_id=:userid AND follower_id=:followerid', array(':userid' => $userId, ':followerid' => $followerId));
                 }
                 $isFollowing = False;
             }
 
         }
 
-        $followerIdResult = mysqli_query($link, "SELECT follower_id FROM `followers` WHERE user_id = '$userId'");
-        if (mysqli_num_rows($followerIdResult) > 0) {
+        if (DB::query('SELECT follower_id FROM followers WHERE user_id=:userid AND follower_id=:followerid', array(':userid' => $userId, ':followerid' => $followerId))) {
 //            echo "Already following";
             $isFollowing = True;
         }
 
         if (isset($_POST['post'])) {
-            Post::createPost($link, $_POST['post-body'], Login::isLoggedIn($link), $userId);
+            Post::createPost($_POST['post-body'], Login::isLoggedIn(), $userId);
         }
 
         if (isset($_GET['postId'])) {
-            Post::likePost($link, $_GET['postId'], $followerId);
+            Post::likePost($_GET['postId'], $followerId);
         }
 
-        $posts = Post::displayPosts($link, $userId, $username, $followerId);
+        $posts = Post::displayPosts($userId, $username, $followerId);
 
     } else {
         die("Username not found!");

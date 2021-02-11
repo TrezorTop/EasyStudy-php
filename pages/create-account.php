@@ -1,46 +1,44 @@
 <?php
 
-include $_SERVER['DOCUMENT_ROOT'] . '/php/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php';
 
 if (isset($_POST['create-account-btn'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
     $email = $_POST['email'];
 
-    $usernameMysqlResult = mysqli_query($link, "SELECT username FROM `users` WHERE username = '$username' OR email = '$email'");
+    if (!DB::query('SELECT username FROM users WHERE username=:username', array(':username' => $username))) {
 
-    if (mysqli_num_rows($usernameMysqlResult) < 1) {
-
-        if (strlen($username) >= 3 && strlen($username) <= 32) {
+        if (strlen($username) >= 3 && strlen($username) <= 60) {
 
             if (preg_match('/[a-zA-Z0-9_]+/', $username)) {
 
                 if (strlen($password) >= 6 && strlen($password) <= 60) {
 
                     if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-                        $query = "INSERT INTO users VALUES (id, '$username', '$hashedPassword', '$email', 0, NULL)";
 
-                        mysqli_query($link, $query);
-                        echo "Success";
+                        if (!DB::query('SELECT email FROM users WHERE email=:email', array(':email' => $email))) {
+
+                            DB::query('INSERT INTO users VALUES (id, :username, :password, :email, \'0\', NULL)', array(':username' => $username, ':password' => password_hash($password, PASSWORD_BCRYPT), ':email' => $email));
+                            echo "Success!";
+                        } else {
+                            echo 'Email in use!';
+                        }
                     } else {
-                        echo "Invalid email!";
+                        echo 'Invalid email!';
                     }
-
                 } else {
-                    echo "Invalid password!";
+                    echo 'Invalid password!';
                 }
-
             } else {
-                echo "Invalid username characters (a-z A-Z 0-0 is only allowed)";
+                echo 'Invalid username';
             }
-
         } else {
-            echo "Invalid username!";
+            echo 'Invalid username';
         }
 
     } else {
-        echo "User already exists! Check your login or email address";
+        echo 'User already exists!';
     }
 }
 

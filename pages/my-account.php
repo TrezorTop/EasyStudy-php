@@ -1,10 +1,10 @@
 <?php
 
-include $_SERVER['DOCUMENT_ROOT'] . '/php/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Login.php';
 
-if (Login::isLoggedIn($link)) {
-    $userId = Login::isLoggedIn($link);
+if (Login::isLoggedIn()) {
+    $userId = Login::isLoggedIn();
 } else {
     die('Not logged in!');
 }
@@ -29,16 +29,13 @@ if (isset($_POST['upload-profile-img'])) {
     }
 
     $response = file_get_contents($imgurURL, false, $context);
-
     $response = json_decode($response);
 
     echo '<pre>';
     print_r($response);
     echo '</pre>';
 
-    $linkFromResponsedData = $response->data->link;
-
-    mysqli_query($link, "UPDATE users SET profileimg = '$linkFromResponsedData' WHERE id = '$userId'");
+    DB::query("UPDATE users SET profileimg = :profileimg WHERE id=:userid", array(':profileimg' => $response->data->link, ':userid' => $userId));
 }
 
 ?>

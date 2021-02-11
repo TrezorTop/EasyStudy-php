@@ -1,51 +1,35 @@
 <?php
 
-include $_SERVER['DOCUMENT_ROOT'] . '/php/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Login.php';
 
 $tokenIsValid = False;
 
-if (Login::isLoggedIn($link)) {
-    echo "Logged In";
-    echo "<br> User ID is " . Login::isLoggedIn($link);
+if (Login::isLoggedIn()) {
 
     if (isset($_POST['change-password-btn'])) {
 
-        $userId = Login::isLoggedIn($link);
+        $userId = Login::isLoggedIn();
         $oldPassword = $_POST['old-password'];
         $newPassword = $_POST['new-password'];
         $newPasswordRepeat = $_POST['new-password-repeat'];
 
-        $passwordMysqlResult = mysqli_query($link, "SELECT password FROM `users` WHERE id = '$userId'");
-        $passwordFormDB = mysqli_fetch_row($passwordMysqlResult)[0];
+        if (password_verify($oldPassword, DB::query('SELECT password FROM users WHERE id=:userid', array(':userid' => $userId))[0]['password'])) {
 
-        if (password_verify($oldPassword, $passwordFormDB)) {
-
-            if ($oldPassword != $newPassword) {
+            if ($newPassword == $newPasswordRepeat) {
 
                 if (strlen($newPassword) >= 6 && strlen($newPassword) <= 60) {
 
-                    if ($newPassword == $newPasswordRepeat) {
-
-                        $newPassword = password_hash($newPassword, PASSWORD_BCRYPT);
-
-                        mysqli_query($link, "UPDATE `users` SET password = '$newPassword' WHERE id = '$userId'");
-                        echo "<br> Password changed successfully";
-
-                    } else {
-                        echo "<br> New passwords don't match";
-                    }
-
-                } else {
-                    echo "<br> New password is too short or too long";
+                    DB::query('UPDATE users SET password=:newpassword WHERE id=:userid', array(':newpassword' => password_hash($newPassword, PASSWORD_BCRYPT), ':userid' => $userId));
+                    echo 'Password changed successfully!';
                 }
 
             } else {
-                echo "<br> Old password and new password must be different";
+                echo 'Passwords don\'t match!';
             }
 
         } else {
-            echo "<br> Current password is incorrect";
+            echo 'Incorrect old password!';
         }
 
     }
@@ -55,13 +39,10 @@ if (Login::isLoggedIn($link)) {
     if (isset($_GET['token'])) {
 
         $token = $_GET['token'];
-        $sha1token = sha1($token);
 
-        $userIdPasswordTokensMysqlResult = mysqli_query($link, "SELECT user_id FROM password_tokens WHERE token = '$sha1token'");
-        $userIdPasswordTokens = mysqli_fetch_row($userIdPasswordTokensMysqlResult)[0];
+        if (DB::query('SELECT user_id FROM password_tokens WHERE token=:token', array(':token' => sha1($token)))) {
 
-        if ($userIdPasswordTokens > 0) {
-
+            $userId = DB::query('SELECT user_id FROM password_tokens WHERE token=:token', array(':token' => sha1($token)))[0]['user_id'];
             $tokenIsValid = True;
 
             if (isset($_POST['change-password-btn'])) {
@@ -69,26 +50,17 @@ if (Login::isLoggedIn($link)) {
                 $newPassword = $_POST['new-password'];
                 $newPasswordRepeat = $_POST['new-password-repeat'];
 
-                $passwordMysqlResult = mysqli_query($link, "SELECT password FROM `users` WHERE id = '$userIdPasswordTokens'");
-                $passwordFormDB = mysqli_fetch_row($passwordMysqlResult)[0];
+                if ($newPassword == $newPasswordRepeat) {
 
-                if (strlen($newPassword) >= 6 && strlen($newPassword) <= 60) {
+                    if (strlen($newPassword) >= 6 && strlen($newPassword) <= 60) {
 
-                    if ($newPassword == $newPasswordRepeat) {
-
-                        $newPassword = password_hash($newPassword, PASSWORD_BCRYPT);
-
-                        mysqli_query($link, "UPDATE `users` SET password = '$newPassword' WHERE id = '$userIdPasswordTokens'");
-                        echo "<br> Password changed successfully";
-
-                        mysqli_query($link, "DELETE FROM `password_tokens` WHERE user_id = '$userIdPasswordTokens'");
-
-                    } else {
-                        echo "<br> New passwords don't match";
+                        DB::query('UPDATE users SET password=:newpassword WHERE id=:userid', array(':newpassword' => password_hash($newPassword, PASSWORD_BCRYPT), ':userid' => $userId));
+                        echo 'Password changed successfully!';
+                        DB::query('DELETE FROM password_tokens WHERE user_id=:userid', array(':userid' => $userId));
                     }
 
                 } else {
-                    echo "<br> New password is too short or too long";
+                    echo 'Passwords don\'t match!';
                 }
 
             }
@@ -107,11 +79,15 @@ if (Login::isLoggedIn($link)) {
 
 <h1>Change your password</h1>
 
-<form action="<?php if (!$tokenIsValid) { echo "change-password.php"; } else { echo "change-password.php?token=$token"; } ?>" method="post">
+<form action="<?php if (!$tokenIsValid) {
+    echo "change-password.php";
+} else {
+    echo "change-password.php?token=$token";
+} ?>" method="post">
     <?php
-        if (!$tokenIsValid) {
-            echo '<input type="password" name="old-password" placeholder="Current password"><br>';
-        }
+    if (!$tokenIsValid) {
+        echo '<input type="password" name="old-password" placeholder="Current password"><br>';
+    }
     ?>
     <input type="password" name="new-password" placeholder="New password"><br>
     <input type="password" name="new-password-repeat" placeholder="Repeat new password"><br>

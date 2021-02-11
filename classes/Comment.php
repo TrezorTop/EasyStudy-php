@@ -4,28 +4,24 @@
 class Comment
 {
 
-    public static function postComment($link, $commentBody, $postId, $userId)
+    public static function postComment($commentBody, $postId, $userId)
     {
 
         if (strlen($commentBody) < 1 || strlen($commentBody) > 257) {
             die('Incorrect length!');
         }
 
-        $userIdResult = mysqli_query($link, "SELECT id FROM posts WHERE id = '$postId'");
-        if (mysqli_num_rows($userIdResult) == 0) {
-            echo 'Invalid $postId';
+        if (!DB::query('SELECT id FROM posts WHERE id=:postid', array(':postid' => $postId))) {
+            echo 'Invalid post ID';
         } else {
-            mysqli_query($link, "INSERT INTO comments VALUES (id, '$commentBody', $userId, NOW(), $postId)");
+            DB::query('INSERT INTO comments VALUES (id, :comment, :userid, NOW(), :postid)', array(':comment' => $commentBody, ':userid' => $userId, ':postid' => $postId));
         }
     }
 
-    public static function displayComments($link, $postId)
+    public static function displayComments($postId)
     {
 
-        $comments = mysqli_query($link, "SELECT comments.comment, users.username 
-                                               FROM comments, users 
-                                               WHERE post_id = $postId
-                                               AND comments.user_id = users.id");
+        $comments = DB::query('SELECT comments.comment, users.username FROM comments, users WHERE post_id = :postid AND comments.user_id = users.id', array(':postid' => $postId));
 
         foreach ($comments as $comment) {
             echo $comment['comment'] . "~" . $comment['username'] . '<hr>';

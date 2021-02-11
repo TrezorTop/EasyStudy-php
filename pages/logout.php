@@ -1,9 +1,9 @@
 <?php
 
-include $_SERVER['DOCUMENT_ROOT'] . '/php/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Login.php';
 
-if (!Login::isLoggedIn($link)) {
+if (!Login::isLoggedIn()) {
     die("Not logged in");
 }
 
@@ -11,15 +11,13 @@ if (isset($_POST['confirm-btn'])) {
 
     if (isset($_POST['logout-all-devices'])) {
 
-        $userId = Login::isLoggedIn($link);
-
-        mysqli_query($link, "DELETE FROM login_tokens WHERE user_id = '$userId'");
+        DB::query('DELETE FROM login_tokens WHERE user_id=:userid', array(':userid' => Login::isLoggedIn()));
 
     } else {
 
         if (isset($_COOKIE['SNID'])) {
-            $oldPrimaryToken = sha1($_COOKIE['SNID']);
-            mysqli_query($link, "DELETE FROM login_tokens WHERE token = '$oldPrimaryToken'");
+
+            DB::query('DELETE FROM login_tokens WHERE token=:token', array(':token' => sha1($_COOKIE['SNID'])));
         } else {
             setcookie('SNID', '1', time() - 3600);
             setcookie('SNID_SECOND', '1', time() - 3600);

@@ -3,47 +3,42 @@
 class Post
 {
 
-    public static function createPost($link, $postBody, $loggedInUserId, $profileUserId)
+    public static function createPost($postBody, $loggedInUserId, $profileUserId)
     {
 
         if ($loggedInUserId == $profileUserId) {
             if (strlen($postBody) < 1 || strlen($postBody) > 257) {
                 die('Incorrect length!');
             } else {
-                mysqli_query($link, "INSERT INTO `posts` VALUES (id, '$postBody', NOW(), '$profileUserId', 0)");
+                DB::query('INSERT INTO posts VALUES (id, :postbody, NOW(), :userid, 0, NULL)', array(':postbody' => $postBody, ':userid' => $profileUserId));
             }
         } else {
             die("Incorrect User ");
         }
     }
 
-    public static function likePost($link, $postId, $liker)
+    public static function likePost($postId, $likerId)
     {
 
-        $userIdResult = mysqli_query($link, "SELECT user_id FROM post_likes WHERE post_id = '$postId' AND user_id = '$liker'");
-        if (mysqli_num_rows($userIdResult) == 0) {
-            mysqli_query($link, "UPDATE posts SET likes = likes + 1 WHERE id = $postId");
-            mysqli_query($link, "INSERT INTO post_likes VALUES (id, '$postId', '$liker')");
+        if (!DB::query('SELECT user_id FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid' => $postId, ':userid' => $likerId))) {
+            DB::query('UPDATE posts SET likes=likes+1 WHERE id=:postid', array(':postid' => $postId));
+            DB::query('INSERT INTO post_likes VALUES (id, :postid, :userid)', array(':postid' => $postId, ':userid' => $likerId));
         } else {
-            mysqli_query($link, "UPDATE posts SET likes = likes - 1 WHERE id = $postId");
-            mysqli_query($link, "DELETE FROM post_likes WHERE post_id = '$postId' and user_id = '$liker'");
+            DB::query('UPDATE posts SET likes=likes-1 WHERE id=:postid', array(':postid' => $postId));
+            DB::query('DELETE FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid' => $postId, ':userid' => $likerId));
         }
     }
 
-    public static function displayPosts($link, $userId, $username, $loggedInUserId)
+    public static function displayPosts($userId, $username, $loggedInUserId)
     {
 
-        $dbPostsResult = mysqli_query($link, "SELECT * FROM `posts` WHERE user_id = '$userId' ORDER BY id DESC");
-
+        $dbPosts = DB::query('SELECT * FROM posts WHERE user_id=:userid ORDER BY id DESC', array(':userid' => $userId));
         $posts = "";
 
-        foreach ($dbPostsResult as $post) {
+        foreach ($dbPosts as $post) {
 
-            $postId = $post['id'];
+            if (!DB::query('SELECT post_id FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid' => $post['id'], ':userid' => $loggedInUserId))) {
 
-            $postIdResult = mysqli_query($link, "SELECT post_id FROM post_likes WHERE post_id = '$postId' AND user_id = '$loggedInUserId'");
-
-            if (mysqli_num_rows($postIdResult) == 0) {
                 $posts .= htmlspecialchars($post['body']) . "
                 <form action=\"profile.php?username=$username&postId=" . $post['id'] . "\" method=\"post\">
                     <input type=\"submit\" name=\"like\" value =\"Like\">

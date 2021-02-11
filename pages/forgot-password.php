@@ -1,19 +1,15 @@
 <?php
 
-include $_SERVER['DOCUMENT_ROOT'] . '/php/connect.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php';
 
 if (isset($_POST['reset-password-btn'])) {
 
     $email = $_POST['email'];
-
     $crypto_strong = True;
     $token = bin2hex(openssl_random_pseudo_bytes(64, $crypto_strong));
-    $sha1Token = sha1($token);
+    $userId = DB::query('SELECT id FROM users WHERE email=:email', array(':email' => $email))[0]['id'];
 
-    $userIdMysqlResult = mysqli_query($link, "SELECT id FROM `users` WHERE email = '$email'");
-    $userId = mysqli_fetch_row($userIdMysqlResult)[0];
-
-    mysqli_query($link, "INSERT INTO password_tokens VALUES (id, '$sha1Token', '$userId')");
+    DB::query('INSERT INTO password_tokens VALUES (id, :token, :user_id)', array(':token' => sha1($token), ':user_id' => $userId));
 
     echo "Email sent!";
 
