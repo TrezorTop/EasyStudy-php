@@ -49,6 +49,23 @@ class Post
         }
     }
 
+    public static function link_add($text)
+    {
+
+        $text = explode(" ", $text);
+        $newString = "";
+
+        foreach ($text as $word) {
+            if (substr($word, 0, 1) == "@") {
+                $newString .= "<a href = 'profile.php?username=" . substr($word, 1) ."'>" . htmlspecialchars($word) . "</a> ";
+            } else {
+                $newString .= htmlspecialchars($word) . " ";
+            }
+        }
+
+        return $newString;
+    }
+
     public static function displayPosts($userId, $username, $loggedInUserId)
     {
 
@@ -59,14 +76,14 @@ class Post
 
             if (!DB::query('SELECT post_id FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid' => $post['id'], ':userid' => $loggedInUserId))) {
 
-                $posts .= "<img width = '200px' src = '" . $post['postimg'] . "'>" . htmlspecialchars($post['body']) . "
+                $posts .= "<img width = '100px' src = '" . $post['postimg'] . "'>" . "<br>" . self::link_add($post['body']) . "
                 <form action=\"profile.php?username=$username&postId=" . $post['id'] . "\" method=\"post\">
                     <input type=\"submit\" name=\"like\" value =\"Like\">
                     <span> " . $post['likes'] . " likes </span>
                 </form>
                 <hr><br>";
             } else {
-                $posts .= "<img src = '" . $post['postimg'] . "'>" . htmlspecialchars($post['body']) . "
+                $posts .= "<img src = '" . $post['postimg'] . "'>" . "<br>" . self::link_add($post['body']) . "
                 <form action=\"profile.php?username=$username&postId=" . $post['id'] . "\" method=\"post\">
                     <input type=\"submit\" name=\"unlike\" value =\"Unlike\">
                     <span> " . $post['likes'] . " likes </span>
