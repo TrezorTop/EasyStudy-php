@@ -10,8 +10,10 @@ class Post
             die('Incorrect length! (createPost)');
         }
 
+        $topics = self::getTopics($postBody);
+
         if ($loggedInUserId == $profileUserId) {
-            DB::query('INSERT INTO posts VALUES (id, :postbody, NOW(), :userid, 0, NULL)', array(':postbody' => $postBody, ':userid' => $profileUserId));
+            DB::query('INSERT INTO posts VALUES (id, :postbody, NOW(), :userid, 0, NULL, :topics)', array(':postbody' => $postBody, ':userid' => $profileUserId, ':topics' => $topics));
 
         } else {
 
@@ -26,6 +28,8 @@ class Post
         if (strlen($postBody) > 257) {
             die('Incorrect length! (createImagePost)');
         }
+
+        $topics = self::getTopics($postBody);
 
         if ($loggedInUserId == $profileUserId) {
             DB::query('INSERT INTO posts VALUES (id, :postbody, NOW(), :userid, 0, NULL)', array(':postbody' => $postBody, ':userid' => $profileUserId));
@@ -49,6 +53,22 @@ class Post
         }
     }
 
+    public static function getTopics($text)
+    {
+
+        $text = explode(" ", $text);
+
+        $topics = "";
+
+        foreach ($text as $word) {
+            if (substr($word, 0, 1) == "#") {
+                $topics .= substr($word, 1) . ",";
+            }
+        }
+
+        return $topics;
+    }
+
     public static function link_add($text)
     {
 
@@ -57,7 +77,9 @@ class Post
 
         foreach ($text as $word) {
             if (substr($word, 0, 1) == "@") {
-                $newString .= "<a href = 'profile.php?username=" . substr($word, 1) ."'>" . htmlspecialchars($word) . "</a> ";
+                $newString .= "<a href = 'profile.php?username=" . substr($word, 1) . "'>" . htmlspecialchars($word) . "</a> ";
+            } else if (substr($word, 0, 1) == "#") {
+                $newString .= "<a href = 'topics.php?topic=" . substr($word, 1) . "'>" . htmlspecialchars($word) . "</a> ";
             } else {
                 $newString .= htmlspecialchars($word) . " ";
             }
