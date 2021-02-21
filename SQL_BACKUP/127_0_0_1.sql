@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Фев 21 2021 г., 14:44
+-- Время создания: Фев 21 2021 г., 14:43
 -- Версия сервера: 5.7.29
 -- Версия PHP: 7.1.33
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- База данных: `social_network`
 --
+CREATE DATABASE IF NOT EXISTS `social_network` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `social_network`;
 
 -- --------------------------------------------------------
 

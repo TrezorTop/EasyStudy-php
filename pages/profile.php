@@ -3,6 +3,7 @@
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Login.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Post.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/classes/Image.php';
 
 $username = "";
 $verified = False;
@@ -58,7 +59,12 @@ if (isset($_GET['username'])) {
         }
 
         if (isset($_POST['post'])) {
-            Post::createPost($_POST['post-body'], Login::isLoggedIn(), $userId);
+            if ($_FILES['postimg']['size'] == 0) {
+                Post::createPost($_POST['post-body'], Login::isLoggedIn(), $userId);
+            } else {
+                $postId = Post::createImagePost($_POST['post-body'], Login::isLoggedIn(), $userId);
+                Image::uploadImage('postimg', "UPDATE posts SET postimg=:postimg WHERE id=:postid", array(':postid'=>$postId));
+            }
         }
 
         if (isset($_GET['postId'])) {
@@ -93,8 +99,10 @@ if (isset($_GET['username'])) {
     ?>
 </form>
 
-<form action="profile.php?username=<?php echo $username ?>" method="post">
+<form action="profile.php?username=<?php echo $username ?>" method="post" enctype="multipart/form-data">
     <textarea name="post-body" cols="30" rows="8"></textarea>
+    <br> Upload an image:
+    <input type="file" name="postimg">
     <input type="submit" name="post" value="Post">
 </form>
 
