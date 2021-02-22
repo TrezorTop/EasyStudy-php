@@ -3,7 +3,6 @@
 
 class Image
 {
-
     public static function uploadImage($formName, $query, $params)
     {
         $image = base64_encode(file_get_contents($_FILES[$formName]['tmp_name']));

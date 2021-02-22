@@ -17,8 +17,7 @@ if (isset($_GET['postId'])) {
     Post::likePost($_GET['postId'], $userId);
 }
 if (isset($_POST['comment'])) {
-    Comment::postComment($_POST['comment-body'], $_GET['postCommentId'], $userId);
-
+    Comment::postComment($_POST['comment-body'], $_GET['postId'], $userId);
 }
 
 $followingPosts = DB::query('SELECT posts.id, posts.body, posts.likes, users.`username` FROM users, posts, followers
@@ -39,7 +38,7 @@ foreach ($followingPosts as $post) {
     }
     echo "<span> " . $post['likes'] . " likes </span>
           </form>
-            <form action=\"index.php?postCommentId=" . $post['id'] . "\" method=\"post\">
+            <form action=\"index.php?postId=" . $post['id'] . "\" method=\"post\">
                 <textarea name=\"comment-body\" cols=\"30\" rows=\"3\"></textarea>
                 <input type=\"submit\" name=\"comment\" value=\"Comment\">
             </form>

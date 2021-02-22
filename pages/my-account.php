@@ -10,9 +10,7 @@ if (Login::isLoggedIn()) {
 }
 
 if (isset($_POST['upload-profile-img'])) {
-
     Image::uploadImage('profile-img' ,"UPDATE users SET profileimg = :profileimg WHERE id=:userid", array(':userid' => $userId));
-
 }
 
 ?>

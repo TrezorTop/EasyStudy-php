@@ -12,7 +12,6 @@ if (isset($_POST['login-btn'])) {
 
             $crypto_strong = True;
             $token = bin2hex(openssl_random_pseudo_bytes(64, $crypto_strong));
-            $sha1Token = sha1($token);
 
             $userId = DB::query('SELECT id FROM users WHERE username=:username', array(':username' => $username))[0]['id'];
 

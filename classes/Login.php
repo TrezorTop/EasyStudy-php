@@ -5,17 +5,12 @@ class Login
     public static function isLoggedIn()
     {
         if (isset($_COOKIE['SNID'])) {
-
             if (DB::query('SELECT user_id FROM login_tokens WHERE token=:token', array(':token' => sha1($_COOKIE['SNID'])))) {
-
                 $userId = DB::query('SELECT user_id FROM login_tokens WHERE token=:token', array(':token' => sha1($_COOKIE['SNID'])))[0]['user_id'];
 
                 if (isset($_COOKIE['SNID_SECOND'])) {
-
                     return $userId;
-
                 } else {
-
                     $crypto_strong = True;
                     $token = bin2hex(openssl_random_pseudo_bytes(64, $crypto_strong));
 
