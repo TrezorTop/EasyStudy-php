@@ -4,6 +4,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Login.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Post.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Image.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/classes/Notify.php';
 
 $username = "";
 $verified = False;
