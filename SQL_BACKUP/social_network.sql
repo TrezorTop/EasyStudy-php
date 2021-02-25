@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Фев 22 2021 г., 15:59
+-- Время создания: Фев 25 2021 г., 19:57
 -- Версия сервера: 5.7.29
 -- Версия PHP: 7.1.33
 
@@ -52,7 +52,8 @@ CREATE TABLE `followers` (
 --
 
 INSERT INTO `followers` (`id`, `user_id`, `follower_id`) VALUES
-(1, 2, 1);
+(1, 2, 1),
+(2, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -71,7 +72,31 @@ CREATE TABLE `login_tokens` (
 --
 
 INSERT INTO `login_tokens` (`id`, `token`, `user_id`) VALUES
-(1, '3218ac22ab91cc6033b95f510c9703697b0b3eff', 1);
+(1, '3218ac22ab91cc6033b95f510c9703697b0b3eff', 1),
+(2, '6c546bc789e7bd7411ac29002789051daef506c7', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `messages`
+--
+
+CREATE TABLE `messages` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `body` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sender` int(11) UNSIGNED NOT NULL,
+  `receiver` int(11) UNSIGNED NOT NULL,
+  `is_read` tinyint(1) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Дамп данных таблицы `messages`
+--
+
+INSERT INTO `messages` (`id`, `body`, `sender`, `receiver`, `is_read`) VALUES
+(1, 'Hello', 2, 2, 0),
+(2, 'hello', 2, 2, 0),
+(3, 'Hello', 2, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -83,16 +108,22 @@ CREATE TABLE `notifications` (
   `id` int(11) UNSIGNED NOT NULL,
   `type` int(11) UNSIGNED NOT NULL,
   `receiver` int(10) UNSIGNED NOT NULL,
-  `sender` int(11) UNSIGNED NOT NULL
+  `sender` int(11) UNSIGNED NOT NULL,
+  `extra` text COLLATE utf8mb4_unicode_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Дамп данных таблицы `notifications`
 --
 
-INSERT INTO `notifications` (`id`, `type`, `receiver`, `sender`) VALUES
-(1, 1, 2, 1),
-(2, 1, 1, 1);
+INSERT INTO `notifications` (`id`, `type`, `receiver`, `sender`, `extra`) VALUES
+(1, 1, 2, 1, NULL),
+(2, 1, 1, 1, NULL),
+(3, 1, 1, 1, NULL),
+(4, 1, 1, 1, ' { \"postbody\": \"@TrezorTop again\" } '),
+(5, 1, 1, 1, ' { \"postbody\": \"@TrezorTop another one\" } '),
+(6, 2, 1, 1, ''),
+(7, 2, 1, 1, '');
 
 -- --------------------------------------------------------
 
@@ -129,9 +160,13 @@ CREATE TABLE `posts` (
 INSERT INTO `posts` (`id`, `body`, `posted_at`, `user_id`, `likes`, `postimg`, `topics`) VALUES
 (5, 'This is my first post, check this out!', '2021-02-22 15:39:00', 1, 0, 'https://i.imgur.com/HTpkOUy.jpg', ''),
 (6, '@Andrey hello!', '2021-02-22 15:39:40', 1, 1, NULL, ''),
-(7, '#topic #test', '2021-02-22 15:40:02', 1, 0, NULL, 'topic,test,'),
+(7, '#topic #test', '2021-02-22 15:40:02', 1, 1, NULL, 'topic,test,'),
 (8, '@Andrey test', '2021-02-22 15:54:27', 1, 0, NULL, ''),
-(9, '@TrezorTop', '2021-02-22 15:55:49', 1, 0, NULL, '');
+(9, '@TrezorTop', '2021-02-22 15:55:49', 1, 0, NULL, ''),
+(10, '@TrezorTop hello again', '2021-02-23 19:49:16', 1, 0, NULL, ''),
+(11, '@TrezorTop again', '2021-02-23 19:55:50', 1, 0, NULL, ''),
+(12, '@TrezorTop another one', '2021-02-23 20:00:29', 1, 1, NULL, ''),
+(13, '@TrezorTop92 hello', '2021-02-25 19:15:45', 2, 0, NULL, '');
 
 -- --------------------------------------------------------
 
@@ -150,9 +185,8 @@ CREATE TABLE `post_likes` (
 --
 
 INSERT INTO `post_likes` (`id`, `post_id`, `user_id`) VALUES
-(1, 4, 1),
-(6, 1, 1),
-(15, 6, 1);
+(6, 7, 1),
+(7, 12, 1);
 
 -- --------------------------------------------------------
 
@@ -204,6 +238,12 @@ ALTER TABLE `login_tokens`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Индексы таблицы `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Индексы таблицы `notifications`
 --
 ALTER TABLE `notifications`
@@ -251,19 +291,25 @@ ALTER TABLE `comments`
 -- AUTO_INCREMENT для таблицы `followers`
 --
 ALTER TABLE `followers`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `login_tokens`
 --
 ALTER TABLE `login_tokens`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT для таблицы `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT для таблицы `password_tokens`
@@ -275,13 +321,13 @@ ALTER TABLE `password_tokens`
 -- AUTO_INCREMENT для таблицы `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT для таблицы `post_likes`
 --
 ALTER TABLE `post_likes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT для таблицы `users`
