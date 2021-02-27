@@ -1,6 +1,7 @@
 <?php
 
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/classes/Mail.php';
 
 if (isset($_POST['reset-password-btn'])) {
 
@@ -11,9 +12,9 @@ if (isset($_POST['reset-password-btn'])) {
 
     DB::query('INSERT INTO password_tokens VALUES (id, :token, :user_id)', array(':token' => sha1($token), ':user_id' => $userId));
 
-    echo "Email sent!";
+    Mail::sendMail('Восстановление пароля', "<a href='http://socialnetwork/pages/change-password.php?token=$token'>http://socialnetwork/pages/change-password.php?token=$token</a>", $email);
 
-    echo "<br> token is $token";
+    echo "Email sent!";
 }
 
 ?>

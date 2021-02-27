@@ -1,6 +1,7 @@
 <?php
 
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/classes/Mail.php';
 
 if (isset($_POST['create-account-btn'])) {
     $username = $_POST['username'];
@@ -20,6 +21,9 @@ if (isset($_POST['create-account-btn'])) {
                         if (!DB::query('SELECT email FROM users WHERE email=:email', array(':email' => $email))) {
 
                             DB::query('INSERT INTO users VALUES (id, :username, :password, :email, \'0\', NULL)', array(':username' => $username, ':password' => password_hash($password, PASSWORD_BCRYPT), ':email' => $email));
+
+                            Mail::sendMail('Добро пожаловать в EasyStudy!', 'Ваш аккаунт был зарегистрирован!', $email);
+
                             echo "Success!";
                         } else {
                             echo 'Email in use!';
