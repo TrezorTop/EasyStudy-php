@@ -1,5 +1,6 @@
 <?php
 require_once("DB.php");
+require_once("Mail.php");
 
 $db = new DB("127.0.0.1", "social_network", "root", "root");
 
@@ -12,6 +13,52 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
     }
 
 } else if ($_SERVER['REQUEST_METHOD'] == "POST") {
+
+    if ($_GET['url'] == "users") {
+        $postBody = file_get_contents("php://input");
+        $postBody = json_decode($postBody);
+
+        $username = $postBody->username;
+        $email = $postBody->email;
+        $password = $postBody->password;
+
+
+        if (!$db->query('SELECT username FROM users WHERE username=:username', array(':username' => $username))) {
+            if (strlen($username) >= 3 && strlen($username) <= 60) {
+                if (preg_match('/[a-zA-Z0-9_]+/', $username)) {
+                    if (strlen($password) >= 6 && strlen($password) <= 60) {
+                        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            if (!$db->query('SELECT email FROM users WHERE email=:email', array(':email' => $email))) {
+                                $db->query('INSERT INTO users VALUES (id, :username, :password, :email, \'0\', NULL)', array(':username' => $username, ':password' => password_hash($password, PASSWORD_BCRYPT), ':email' => $email));
+                                Mail::sendMail('Добро пожаловать в EasyStudy!', 'Ваш аккаунт был зарегистрирован!', $email);
+
+                                echo '{ "Success": "User Created!" }';
+                                http_response_code(200);
+                            } else {
+                                echo '{ "Error": "Email in use!" }';
+                                http_response_code(409);
+                            }
+                        } else {
+                            echo '{ "Error": "Invalid email" }';
+                            http_response_code(409);
+                        }
+                    } else {
+                        echo '{ "Error": "Invalid password!" }';
+                        http_response_code(409);
+                    }
+                } else {
+                    echo '{ "Error": "Invalid username(a-z, A-Z, 0-9 are only allowed)" }';
+                    http_response_code(409);
+                }
+            } else {
+                echo '{ "Error": "Invalid username!" }';
+                http_response_code(409);
+            }
+        } else {
+            echo '{ "Error": "User already exists!" }';
+            http_response_code(409);
+        }
+    }
 
     if ($_GET['url'] == "auth") {
         $postBody = file_get_contents("php://input");
