@@ -1,0 +1,64 @@
+<form action="index.php" method="post">
+    <input type="text" name="searchbox" value="">
+    <input type="submit" name="search" value="Search">
+</form>
+
+<div class="timeline-posts">
+
+</div>
+
+<script src="../libs/jquery-3.5.1.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $.ajax({
+
+            type: "GET",
+            url: "../api/posts",
+            processData: false,
+            contentType: "application/json",
+            data: '',
+            success: function (r) {
+                var posts = JSON.parse(r);
+                $.each(posts, function (index) {
+                    $('.timeline-posts').html(
+                        $('.timeline-posts').html() +
+                        '   <blockquote>\n' +
+                        '        <p>' + posts[index].PostBody + '</p>\n' +
+                        '        <footer>Posted by ' + posts[index].PostedBy + ' on ' + posts[index].PostDate + '\n' +
+                        '            <button data-id="' + posts[index].PostId + '">like <span>' + posts[index].Likes + '</span></button>\n' +
+                        '            <button>comment</button>\n' +
+                        '        </footer>\n' +
+                        '    </blockquote>'
+                    )
+
+                    $('[data-id]').click(function () {
+                        var buttonId = $(this).attr('data-id');
+                        $.ajax({
+
+                            type: "POST",
+                            url: "../api/likes?id=" + $(this).attr('data-id'),
+                            processData: false,
+                            contentType: "application/json",
+                            data: '',
+                            success: function (r) {
+                                var res = JSON.parse(r)
+                                $("[data-id='" + buttonId + "']").html('like <span>' + res.Likes + '</span>')
+                                console.log(r)
+                            },
+                            error: function (r) {
+                                console.log(r)
+                            }
+                        });
+                    })
+                })
+            },
+            error: function (r) {
+                console.log(r)
+            }
+
+        });
+
+    });
+</script>

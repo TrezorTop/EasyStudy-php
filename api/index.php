@@ -10,6 +10,39 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     } else if ($_GET['url'] == "users") {
 
+    } else if ($_GET['url'] == "posts") {
+
+        $token = $_COOKIE['SNID'];
+
+        $userId = $db->query('SELECT user_id FROM login_tokens WHERE token=:token', array(':token' => sha1($token)))[0]['user_id'];
+
+        $followingPosts = $db->query('SELECT posts.id, posts.body, posts.posted_at, posts.likes, users.`username` FROM users, posts, followers
+                                     WHERE posts.user_id = followers.user_id
+                                     AND users.id = posts.user_id
+                                     AND follower_id = :userid
+                                     ORDER BY posts.likes DESC;', array(':userid' => $userId));
+
+        $response = "[";
+        foreach ($followingPosts as $post) {
+
+            $response .= "{";
+
+            $response .= '"PostId": ' . $post['id'] . ',';
+            $response .= '"PostBody": "' . $post['body'] . '",';
+            $response .= '"PostedBy": "' . $post['username'] . '",';
+            $response .= '"PostDate": "' . $post['posted_at'] . '",';
+            $response .= '"Likes": ' . $post['likes'] . '';
+
+            $response .= "},";
+
+
+        }
+
+        $response = substr($response, 0, strlen($response) - 1);
+        $response .= "]";
+
+        echo $response;
+
     }
 
 } else if ($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -83,7 +116,28 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             http_response_code(401);
         }
 
+    } else if ($_GET['url'] == "likes") {
+
+        $postId = $_GET['id'];
+
+        $token = $_COOKIE['SNID'];
+        $likerId = $db->query('SELECT user_id FROM login_tokens WHERE token=:token', array(':token' => sha1($token)))[0]['user_id'];
+
+        if (!$db->query('SELECT user_id FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid' => $postId, ':userid' => $likerId))) {
+            $db->query('UPDATE posts SET likes=likes+1 WHERE id=:postid', array(':postid' => $postId));
+            $db->query('INSERT INTO post_likes VALUES (id, :postid, :userid)', array(':postid' => $postId, ':userid' => $likerId));
+//            Notify::createNotify("", $postId);
+        } else {
+            $db->query('UPDATE posts SET likes=likes-1 WHERE id=:postid', array(':postid' => $postId));
+            $db->query('DELETE FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid' => $postId, ':userid' => $likerId));
+        }
+
+        echo "{";
+        echo '"Likes":';
+        echo $db->query('SELECT likes FROM posts WHERE id=:postid', array(':postid'=>$postId))[0]['likes'];
+        echo "}";
     }
+
 
 } else if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
     if ($_GET['url'] == "auth") {

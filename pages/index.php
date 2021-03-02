@@ -10,7 +10,7 @@ if (Login::isLoggedIn()) {
     $userId = Login::isLoggedIn();
     $showTimeLine = True;
 } else {
-    echo "Not logged in";
+    die("Not logged in");
 }
 
 if (isset($_GET['postId'])) {
@@ -86,7 +86,5 @@ foreach ($followingPosts as $post) {
 
     Comment::displayComments($post['id']);
 
-    echo "
-          <hr><br>";
-
+    echo "<hr><br>";
 }
