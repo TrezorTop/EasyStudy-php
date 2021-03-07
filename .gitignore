@@ -1,0 +1,5 @@
+# Ignore All Dependencies
+/node_modules/
+
+#Ignore All Idea files
+/.idea/
