@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="3ba040e3-85d2-48d6-ab08-7858df162746" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1pQmPIgh2OQZNCKbVALavYSbIte" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="ignore_missing_gitignore" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Catalan\Desktop\localhost\SocialNetwork\source\Backend" />
+      <recent name="C:\Users\Catalan\Desktop\localhost\SocialNetwork\source" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3ba040e3-85d2-48d6-ab08-7858df162746" name="Default Changelist" comment="" />
+      <created>1615123680380</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1615123680380</updated>
+      <workItem from="1615123688213" duration="270000" />
+      <workItem from="1615123981190" duration="897000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="540" y="274" key="IDE.errors.dialog" timestamp="1615124001398">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="540" y="274" key="IDE.errors.dialog/0.0.1920.1080/930.-900.1440.900/-436.-728.1366.728@0.0.1920.1080" timestamp="1615124001398" />
+    <state x="563" y="194" key="SettingsEditor" timestamp="1615124887871">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="563" y="194" key="SettingsEditor/0.0.1920.1080/930.-900.1440.900/-436.-728.1366.728@0.0.1920.1080" timestamp="1615124887871" />
+    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup" timestamp="1615124545875">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="623" y="235" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080/930.-900.1440.900/-436.-728.1366.728@0.0.1920.1080" timestamp="1615124545875" />
+  </component>
+</project>
