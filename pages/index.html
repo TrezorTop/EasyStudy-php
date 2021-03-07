@@ -28,10 +28,34 @@
                         '        <p>' + posts[index].PostBody + '</p>\n' +
                         '        <footer>Posted by ' + posts[index].PostedBy + ' on ' + posts[index].PostDate + '\n' +
                         '            <button data-id="' + posts[index].PostId + '">like <span>' + posts[index].Likes + '</span></button>\n' +
-                        '            <button>comment</button>\n' +
+                        '            <button data-postid="' + posts[index].PostId + '" class="comment-btn" >comment</button>\n' +
                         '        </footer>\n' +
-                        '    </blockquote>'
+                        '        <div class="comments" style="display: none;"></div>' +
+                        '    </blockquote>' +
+                        '    <hr>'
                     )
+
+                    $('[data-postid]').click(function () {
+                        var buttonId = $(this).attr('data-postid');
+                        var commentElement = $(this).parent().parent().children().last();
+
+                        $.ajax({
+
+                            type: "GET",
+                            url: "../api/comments?postId=" + $(this).attr('data-postid'),
+                            processData: false,
+                            contentType: "application/json",
+                            data: '',
+                            success: function (r) {
+                                var res = JSON.parse(r)
+
+                                showCommentsSection(res, commentElement);
+                            },
+                            error: function (r) {
+                                console.log(r)
+                            }
+                        });
+                    })
 
                     $('[data-id]').click(function () {
                         var buttonId = $(this).attr('data-id');
@@ -45,12 +69,15 @@
                             success: function (r) {
                                 var res = JSON.parse(r)
                                 $("[data-id='" + buttonId + "']").html('like <span>' + res.Likes + '</span>')
-                                console.log(r)
                             },
                             error: function (r) {
                                 console.log(r)
                             }
                         });
+                    })
+
+                    $('.comment-btn').click(function () {
+                        $(this).parent().parent().children().last().toggle();
                     })
                 })
             },
@@ -59,6 +86,18 @@
             }
 
         });
+
+        function showCommentsSection(res, commentElement) {
+            var output = ""
+            for (let i = 0; i < res.length; i++) {
+                output += res[i].Comment;
+                output += " ~ ";
+                output += res[i].CommentedBy;
+                output += "<hr>"
+            }
+
+            $(commentElement).html(output);
+        }
 
     });
 </script>

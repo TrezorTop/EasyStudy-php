@@ -10,6 +10,22 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     } else if ($_GET['url'] == "users") {
 
+    } else if ($_GET['url'] == "comments" && isset($_GET['postId'])) {
+
+        $output = "";
+        $comments = $db->query('SELECT comments.comment, users.username FROM comments, users WHERE post_id = :postid AND comments.user_id = users.id', array(':postid' => $_GET['postId']));
+        $output .= "[";
+        foreach ($comments as $comment) {
+            $output .= "{";
+            $output .= '"Comment": "' . $comment['comment'] . '",';
+            $output .= '"CommentedBy": "' . $comment['username'] . '"';
+            $output .= "},";
+            //echo $comment['comment']." ~ ".$comment['username']."<hr />";
+        }
+        $output = substr($output, 0, strlen($output) - 1);
+        $output .= "]";
+        echo $output;
+
     } else if ($_GET['url'] == "posts") {
 
         $token = $_COOKIE['SNID'];
@@ -63,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                             if (!$db->query('SELECT email FROM users WHERE email=:email', array(':email' => $email))) {
                                 $db->query('INSERT INTO users VALUES (id, :username, :password, :email, \'0\', NULL)', array(':username' => $username, ':password' => password_hash($password, PASSWORD_BCRYPT), ':email' => $email));
+
                                 Mail::sendMail('Добро пожаловать в EasyStudy!', 'Ваш аккаунт был зарегистрирован!', $email);
 
                                 echo '{ "Success": "User Created!" }';
@@ -134,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         echo "{";
         echo '"Likes":';
-        echo $db->query('SELECT likes FROM posts WHERE id=:postid', array(':postid'=>$postId))[0]['likes'];
+        echo $db->query('SELECT likes FROM posts WHERE id=:postid', array(':postid' => $postId))[0]['likes'];
         echo "}";
     }
 
