@@ -3,3 +3,7 @@
 
 #Ignore All Idea files
 /.idea/
+
+#Ignore All current build files
+/source/!builded/
+/dist/

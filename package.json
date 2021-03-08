@@ -2,12 +2,18 @@
   "name": "SocialNetwork",
   "version": "1.0",
   "description": "Simple Social Network",
-  "main": "index.js",
+  "main": "source/main.js",
   "repository": "https://github.com/TrezorTop/SocialNetwork",
   "author": "Andrey Selukov",
   "license": "None",
   "private": true,
+  "scripts": {
+    "buildProd": "cross-env NODE_ENV=production webpack --mode production",
+    "buildDev": "cross-env NODE_ENV=development webpack --mode development",
+    "watch": "cross-env NODE_ENV=development webpack serve --mode development"
+  },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "webpack": "^5.24.3",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2"
