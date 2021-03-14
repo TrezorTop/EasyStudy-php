@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         $output = "";
         $comments = $db->query('SELECT comments.comment, users.username FROM comments, users WHERE post_id = :postid AND comments.user_id = users.id', array(':postid' => $_GET['postId']));
+
         $output .= "[";
         foreach ($comments as $comment) {
             $output .= "{";
@@ -24,7 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         }
         $output = substr($output, 0, strlen($output) - 1);
         $output .= "]";
-        echo $output;
+        if (count($comments) != 0) {
+            echo $output;
+        } else {
+            $output = "";
+            $output .= "[";
+            $output .= "]";
+
+            echo $output;
+        }
 
     } else if ($_GET['url'] == "posts") {
 
@@ -36,6 +45,36 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                                      WHERE posts.user_id = followers.user_id
                                      AND users.id = posts.user_id
                                      AND follower_id = :userid
+                                     ORDER BY posts.likes DESC;', array(':userid' => $userId));
+
+        $response = "[";
+        foreach ($followingPosts as $post) {
+
+            $response .= "{";
+
+            $response .= '"PostId": ' . $post['id'] . ',';
+            $response .= '"PostBody": "' . $post['body'] . '",';
+            $response .= '"PostedBy": "' . $post['username'] . '",';
+            $response .= '"PostDate": "' . $post['posted_at'] . '",';
+            $response .= '"Likes": ' . $post['likes'] . '';
+
+            $response .= "},";
+
+
+        }
+
+        $response = substr($response, 0, strlen($response) - 1);
+        $response .= "]";
+
+        echo $response;
+
+    } else if ($_GET['url'] == "profileposts") {
+
+        $userId = $db->query('SELECT id FROM users WHERE username=:username', array(':username' => $_GET['username']))[0]['id'];
+
+        $followingPosts = $db->query('SELECT posts.id, posts.body, posts.posted_at, posts.likes, users.`username` FROM users, posts
+                                     WHERE users.id = posts.user_id
+                                     AND users.id = :userid
                                      ORDER BY posts.likes DESC;', array(':userid' => $userId));
 
         $response = "[";
