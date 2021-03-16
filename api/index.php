@@ -23,9 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 $paramsArray[":p$i"] = $toSearch[$i];
             }
         }
-        $posts = $db->query("SELECT posts.body, users.username, posts.posted_at FROM posts, users WHERE users.id = posts.user_id AND posts.body LIKE :body $whereClause", $paramsArray);
+        $posts = $db->query("SELECT posts.id, posts.body, users.username, posts.posted_at FROM posts, users WHERE users.id = posts.user_id AND posts.body LIKE :body $whereClause", $paramsArray);
 
-        echo "<pre>";  
         echo json_encode($posts);
 
     } else if ($_GET['url'] == "users") {

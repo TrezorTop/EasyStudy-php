@@ -6,7 +6,7 @@ include $_SERVER['DOCUMENT_ROOT'] . '/classes/Post.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Image.php';
 include $_SERVER['DOCUMENT_ROOT'] . '/classes/Notify.php';
 
-$test = DB::query('SELECT comments.comment, users.username FROM comments, users WHERE post_id = :postid AND comments.user_id = users.id', array('postid'=>6));
+$test = DB::query('SELECT comments.comment, users.username FROM comments, users WHERE post_id = :postid AND comments.user_id = users.id', array('postid' => 6));
 
 if (count($test) != 0) {
     echo 'is empty';
@@ -200,7 +200,9 @@ if (isset($_GET['username'])) {
             <div class="col-md-3">
                 <ul class="list-group">
                     <li class="list-group-item"><span><strong>About Me</strong></span>
-                        <p>Welcome to my profile Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium alias dolore eligendi enim eos est et explicabo, impedit nostrum numquam officiis possimus quasi quia quibusdam repudiandae saepe, ut velit vero!</p>
+                        <p>Welcome to my profile Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
+                            alias dolore eligendi enim eos est et explicabo, impedit nostrum numquam officiis possimus
+                            quasi quia quibusdam repudiandae saepe, ut velit vero!</p>
                     </li>
                 </ul>
             </div>
@@ -233,6 +235,7 @@ if (isset($_GET['username'])) {
 <script src="assets/js/bs-animation.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.1.1/aos.js"></script>
 <script type="text/javascript">
+
     $(document).ready(function () {
 
         $.ajax({
@@ -248,7 +251,7 @@ if (isset($_GET['username'])) {
                     $('.timeline-posts').html(
                         $('.timeline-posts').html() +
 
-                        '<li class="list-group-item">\n' +
+                        '<li class="list-group-item" id="' + posts[index].PostId + '">\n' +
                         '    <blockquote>\n' +
                         '        <p>' + posts[index].PostBody + '</p>\n' +
                         '        <footer>Posted by ' + posts[index].PostedBy + ' on ' + posts[index].PostDate + '\n' +
@@ -310,28 +313,42 @@ if (isset($_GET['username'])) {
                     $('.comment-btn').click(function () {
                         $(this).parent().parent().children().last().toggle();
                     })
+
                 })
+
+                scrollToAnchor(location.hash);
+
             },
             error: function (r) {
                 console.log(r)
             }
 
-        });
+        })
 
-        function showCommentsSection(res, commentElement) {
-            var output = ""
-            for (let i = 0; i < res.length; i++) {
-                output += res[i].Comment;
-                output += " ~ ";
-                output += res[i].CommentedBy;
-                output += "<hr>"
-            }
 
-            $(commentElement).html(output);
-            console.log(res);
-        }
 
     });
+
+    function showCommentsSection(res, commentElement) {
+        var output = ""
+        for (let i = 0; i < res.length; i++) {
+            output += res[i].Comment;
+            output += " ~ ";
+            output += res[i].CommentedBy;
+            output += "<hr>"
+        }
+
+        $(commentElement).html(output);
+        console.log(res);
+    }
+
+    function scrollToAnchor(aid) {
+        let aTag = $(aid);
+        $('html,body').animate({
+            scrollTop: aTag.offset().top
+        }, 1000, "linear");
+    }
+
 </script>
 </body>
 
