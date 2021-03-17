@@ -88,12 +88,6 @@ if (isset($_GET['username'])) {
 
 ?>
 
-<!-- <form action="profile.php?username=<?php echo $username ?>" method="post" enctype="multipart/form-data">
-    <textarea name="post-body" cols="30" rows="8"></textarea>
-    <br> Upload an image:
-    <input type="file" name="postimg">
-    <input type="submit" name="post" value="Post">
-</form> -->
 
 <!DOCTYPE html>
 <html>
@@ -215,10 +209,35 @@ if (isset($_GET['username'])) {
             </div>
             <div class="col-md-3">
                 <button class="btn btn-default" type="button"
-                        style="width:100%;background-image:url(&quot;none&quot;);background-color:#da052b;color:#fff;padding:16px 32px;margin:0px 0px 6px;border:none;box-shadow:none;text-shadow:none;opacity:0.9;text-transform:uppercase;font-weight:bold;font-size:13px;letter-spacing:0.4px;line-height:1;outline:none;">
+                        style="width:100%;background-image:url(&quot;none&quot;);background-color:#da052b;color:#fff;padding:16px 32px;margin:0px 0px 6px;border:none;box-shadow:none;text-shadow:none;opacity:0.9;text-transform:uppercase;font-weight:bold;font-size:13px;letter-spacing:0.4px;line-height:1;outline:none;"
+                        onclick="showNewPostModal()">
                     NEW POST
                 </button>
                 <ul class="list-group"></ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="new-post" role="dialog" tabindex="-1" style="padding-top:100px;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">x</span></button>
+                <h4 class="modal-title">New post</h4></div>
+            <div style="max-height: 400px; overflow-y: auto">
+                <form action="profile.php?username=<?php echo $username ?>" method="post" enctype="multipart/form-data">
+                    <textarea name="post-body" cols="30" rows="8"></textarea>
+                    <br> Upload an image:
+                    <input type="file" name="postimg">
+
+            </div>
+            <div class="modal-footer">
+                <input class="btn btn-default"
+                       style="background-image:url(&quot;none&quot;);background-color:#da052b;color:#fff;padding:16px 32px;margin:0px 0px 6px;border:none;box-shadow:none;text-shadow:none;opacity:0.9;text-transform:uppercase;font-weight:bold;font-size:13px;letter-spacing:0.4px;line-height:1;outline:none;"
+                       type="submit" name="post" value="Post">
+                <button class="btn btn-default" type="button" data-dismiss="modal">Close</button>
+                </form>
             </div>
         </div>
     </div>
@@ -326,8 +345,11 @@ if (isset($_GET['username'])) {
         })
 
 
-
     });
+
+    function showNewPostModal() {
+        $('#new-post').modal('show')
+    }
 
     function showCommentsSection(res, commentElement) {
         var output = ""
