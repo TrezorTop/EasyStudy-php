@@ -17,3 +17,4 @@
 * **_`yarn run buildProd`_** - сборка проекта для его выгрузки на хостинг
 * **_`yarn run buildDev`_** - сборка проекта для разработки
 * **_`yarn run watch`_** - работа в режиме **_LiveServer_**
+* **_`yarn autoclean --force`_** - очистка зависимостей 
