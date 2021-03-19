@@ -7,3 +7,4 @@
 #Ignore All current build files
 /source/!builded/
 /dist/
+/yarn-error.log
