@@ -5,12 +5,7 @@
 /.idea/
 
 # Ignore All current build files
-/dist/ProductionBuild/*
-/dist/DeveloperBuild/*
-
-# But do not ignore folders!
-!/dist/ProductionBuild/.gitkeep
-!/dist/DeveloperBuild/.gitkeep
+/dist/
 
 # Ignore yarn warnings and error
 /yarn-error.log

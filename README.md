@@ -18,3 +18,4 @@
 * **_`yarn run buildDev`_** - сборка проекта для разработки
 * **_`yarn run watch`_** - работа в режиме **_LiveServer_**
 * **_`yarn autoclean --force`_** - очистка зависимостей 
+* **_`yarn upgrade`_** - обновление пакетов 
