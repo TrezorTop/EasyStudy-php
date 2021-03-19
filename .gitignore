@@ -1,12 +1,16 @@
 # Ignore All Dependencies
 /node_modules/
 
-#Ignore All Idea files
+# Ignore All Idea files
 /.idea/
 
-#Ignore All current build files
-/source/!builded/
-/dist/
+# Ignore All current build files
+/dist/ProductionBuild/*
+/dist/DeveloperBuild/*
 
-#Ignore yarn warnings and error
+# But do not ignore folders!
+!/dist/ProductionBuild/.gitkeep
+!/dist/DeveloperBuild/.gitkeep
+
+# Ignore yarn warnings and error
 /yarn-error.log
