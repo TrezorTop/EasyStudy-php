@@ -6,7 +6,7 @@
 import "../_vendor";
 
 import "./scss/main.scss";
-import html from "./main.html";
+import html from "./index.html";
 
 
 import "./js/app";
