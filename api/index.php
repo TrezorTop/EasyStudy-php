@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         $userId = $db->query('SELECT user_id FROM login_tokens WHERE token=:token', array(':token' => sha1($token)))[0]['user_id'];
 
-        $followingPosts = $db->query('SELECT posts.id, posts.body, posts.posted_at, posts.likes, users.`username` FROM users, posts, followers
+        $followingPosts = $db->query('SELECT posts.id, posts.body, posts.posted_at, posts.postimg, posts.likes, users.`username` FROM users, posts, followers
                                      WHERE (posts.user_id = followers.user_id
                                      OR posts.user_id = :userid) 
                                      AND users.id = posts.user_id
@@ -76,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             $response .= '"PostBody": "' . $post['body'] . '",';
             $response .= '"PostedBy": "' . $post['username'] . '",';
             $response .= '"PostDate": "' . $post['posted_at'] . '",';
+            $response .= '"PostImage": "' . $post['postimg'] . '",';
             $response .= '"Likes": ' . $post['likes'] . '';
 
             $response .= "},";
@@ -92,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
         $userId = $db->query('SELECT id FROM users WHERE username=:username', array(':username' => $_GET['username']))[0]['id'];
 
-        $followingPosts = $db->query('SELECT posts.id, posts.body, posts.posted_at, posts.likes, users.`username` FROM users, posts
+        $followingPosts = $db->query('SELECT posts.id, posts.body, posts.posted_at, posts.postimg, posts.likes, users.`username` FROM users, posts
                                      WHERE users.id = posts.user_id
                                      AND users.id = :userid
                                      ORDER BY posts.posted_at DESC;', array(':userid' => $userId));
@@ -106,6 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
             $response .= '"PostBody": "' . $post['body'] . '",';
             $response .= '"PostedBy": "' . $post['username'] . '",';
             $response .= '"PostDate": "' . $post['posted_at'] . '",';
+            $response .= '"PostImage": "' . $post['postimg'] . '",';
             $response .= '"Likes": ' . $post['likes'] . '';
 
             $response .= "},";

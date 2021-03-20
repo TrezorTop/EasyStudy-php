@@ -267,26 +267,55 @@ if (isset($_GET['username'])) {
             success: function (r) {
                 var posts = JSON.parse(r);
                 $.each(posts, function (index) {
-                    $('.timeline-posts').html(
-                        $('.timeline-posts').html() +
 
-                        '<li class="list-group-item" id="' + posts[index].PostId + '">\n' +
-                        '    <blockquote>\n' +
-                        '        <p>' + posts[index].PostBody + '</p>\n' +
-                        '        <footer>Posted by ' + posts[index].PostedBy + ' on ' + posts[index].PostDate + '\n' +
-                        '            <button class="btn btn-default" type="button"\n' +
-                        '                    style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;" data-id="' + posts[index].PostId + '">\n' +
-                        '            <span><i class="glyphicon glyphicon-heart" data-aos="flip-right"></i>' + posts[index].Likes + '</span>\n' +
-                        '            </button>\n' +
-                        '            <button class="btn btn-default comment comment-btn" type="button"\n' +
-                        '                    data-postid="' + posts[index].PostId + '" style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;">\n' +
-                        '                <i class="glyphicon glyphicon-flash" style="color:#f9d616;"></i><span\n' +
-                        '                    style="color:#f9d616;">Comments</span></button>\n' +
-                        '        </footer>\n' +
-                        '        <div style="display: none;"></div>' +
-                        '    </blockquote>\n' +
-                        '</li>'
-                    )
+                    if (posts[index].PostImage == "") {
+
+                        $('.timeline-posts').html(
+                            $('.timeline-posts').html() +
+
+                            '<li class="list-group-item" id="' + posts[index].PostId + '">\n' +
+                            '    <blockquote>\n' +
+                            '        <p>' + posts[index].PostBody + '</p>\n' +
+                            '        <footer>Posted by ' + posts[index].PostedBy + ' on ' + posts[index].PostDate + '\n' +
+                            '            <button class="btn btn-default" type="button"\n' +
+                            '                    style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;" data-id="' + posts[index].PostId + '">\n' +
+                            '            <span><i class="glyphicon glyphicon-heart" data-aos="flip-right"></i>' + posts[index].Likes + '</span>\n' +
+                            '            </button>\n' +
+                            '            <button class="btn btn-default comment comment-btn" type="button"\n' +
+                            '                    data-postid="' + posts[index].PostId + '" style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;">\n' +
+                            '                <i class="glyphicon glyphicon-flash" style="color:#f9d616;"></i><span\n' +
+                            '                    style="color:#f9d616;">Comments</span></button>\n' +
+                            '        </footer>\n' +
+                            '        <div style="display: none;"></div>' +
+                            '    </blockquote>\n' +
+                            '</li>'
+                        )
+
+                    } else {
+
+                        $('.timeline-posts').html(
+                            $('.timeline-posts').html() +
+
+                            '<li class="list-group-item" id="' + posts[index].PostId + '">\n' +
+                            '    <blockquote>\n' +
+                            '        <p>' + posts[index].PostBody + '</p>\n' +
+                            '        <img src="" data-tempsrc="' + posts[index].PostImage + '" class="post-img" id="img' + posts[index].PostId + '">\n' +
+                            '        <footer>Posted by ' + posts[index].PostedBy + ' on ' + posts[index].PostDate + '\n' +
+                            '            <button class="btn btn-default" type="button"\n' +
+                            '                    style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;" data-id="' + posts[index].PostId + '">\n' +
+                            '            <span><i class="glyphicon glyphicon-heart" data-aos="flip-right"></i>' + posts[index].Likes + '</span>\n' +
+                            '            </button>\n' +
+                            '            <button class="btn btn-default comment comment-btn" type="button"\n' +
+                            '                    data-postid="' + posts[index].PostId + '" style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;">\n' +
+                            '                <i class="glyphicon glyphicon-flash" style="color:#f9d616;"></i><span\n' +
+                            '                    style="color:#f9d616;">Comments</span></button>\n' +
+                            '        </footer>\n' +
+                            '        <div style="display: none;"></div>' +
+                            '    </blockquote>\n' +
+                            '</li>'
+                        )
+
+                    }
 
                     $('[data-postid]').click(function () {
                         var buttonId = $(this).attr('data-postid');
@@ -333,6 +362,13 @@ if (isset($_GET['username'])) {
                         $(this).parent().parent().children().last().toggle();
                     })
 
+                })
+
+                $('.post-img').each(function () {
+                    this.src = $(this).attr('data-tempsrc');
+                    this.onload = function () {
+                        this.style.opacity = '1';
+                    }
                 })
 
                 scrollToAnchor(location.hash);
