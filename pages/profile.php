@@ -255,12 +255,143 @@ if (isset($_GET['username'])) {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.1.1/aos.js"></script>
 <script type="text/javascript">
 
+    var start = 5;
+    var working = false;
+    $(window).scroll(function () {
+        if ($(this).scrollTop() + 1 >= $('body').height() - $(window).height()) {
+            if (working === false) {
+                working = true;
+                $.ajax({
+
+                    type: "GET",
+                    url: "../api/profileposts?username=<?php echo $username; ?>&start=" + start,
+                    processData: false,
+                    contentType: "application/json",
+                    data: '',
+                    success: function (r) {
+                        var posts = JSON.parse(r)
+                        $.each(posts, function (index) {
+
+                            if (posts[index].PostImage == "") {
+
+                                $('.timeline-posts').html(
+                                    $('.timeline-posts').html() +
+
+                                    '<li class="list-group-item" id="' + posts[index].PostId + '">\n' +
+                                    '    <blockquote>\n' +
+                                    '        <p>' + posts[index].PostBody + '</p>\n' +
+                                    '        <footer>Posted by ' + posts[index].PostedBy + ' on ' + posts[index].PostDate + '\n' +
+                                    '            <button class="btn btn-default" type="button"\n' +
+                                    '                    style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;" data-id="' + posts[index].PostId + '">\n' +
+                                    '            <span><i class="glyphicon glyphicon-heart" data-aos="flip-right"></i>' + posts[index].Likes + '</span>\n' +
+                                    '            </button>\n' +
+                                    '            <button class="btn btn-default comment comment-btn" type="button"\n' +
+                                    '                    data-postid="' + posts[index].PostId + '" style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;">\n' +
+                                    '                <i class="glyphicon glyphicon-flash" style="color:#f9d616;"></i><span\n' +
+                                    '                    style="color:#f9d616;">Comments</span></button>\n' +
+                                    '        </footer>\n' +
+                                    '        <div style="display: none;"></div>' +
+                                    '    </blockquote>\n' +
+                                    '</li>'
+                                )
+
+                            } else {
+
+                                $('.timeline-posts').html(
+                                    $('.timeline-posts').html() +
+
+                                    '<li class="list-group-item" id="' + posts[index].PostId + '">\n' +
+                                    '    <blockquote>\n' +
+                                    '        <p>' + posts[index].PostBody + '</p>\n' +
+                                    '        <img src="" data-tempsrc="' + posts[index].PostImage + '" class="postimg" id="img' + posts[index].PostId + '">\n' +
+                                    '        <footer>Posted by ' + posts[index].PostedBy + ' on ' + posts[index].PostDate + '\n' +
+                                    '            <button class="btn btn-default" type="button"\n' +
+                                    '                    style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;" data-id="' + posts[index].PostId + '">\n' +
+                                    '            <span><i class="glyphicon glyphicon-heart" data-aos="flip-right"></i>' + posts[index].Likes + '</span>\n' +
+                                    '            </button>\n' +
+                                    '            <button class="btn btn-default comment comment-btn" type="button"\n' +
+                                    '                    data-postid="' + posts[index].PostId + '" style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;">\n' +
+                                    '                <i class="glyphicon glyphicon-flash" style="color:#f9d616;"></i><span\n' +
+                                    '                    style="color:#f9d616;">Comments</span></button>\n' +
+                                    '        </footer>\n' +
+                                    '        <div style="display: none;"></div>' +
+                                    '    </blockquote>\n' +
+                                    '</li>'
+                                )
+
+                            }
+                            $('[data-postid]').click(function () {
+                                var buttonid = $(this).attr('data-postid');
+
+                                $.ajax({
+
+                                    type: "GET",
+                                    url: "api/comments?postid=" + $(this).attr('data-postid'),
+                                    processData: false,
+                                    contentType: "application/json",
+                                    data: '',
+                                    success: function (r) {
+                                        var res = JSON.parse(r)
+                                        showCommentsModal(res);
+                                    },
+                                    error: function (r) {
+                                        console.log(r)
+                                    }
+
+                                });
+                            });
+
+                            $('[data-id]').click(function () {
+                                var buttonid = $(this).attr('data-id');
+                                $.ajax({
+
+                                    type: "POST",
+                                    url: "api/likes?id=" + $(this).attr('data-id'),
+                                    processData: false,
+                                    contentType: "application/json",
+                                    data: '',
+                                    success: function (r) {
+                                        var res = JSON.parse(r)
+                                        $("[data-id='" + buttonid + "']").html(' <i class="glyphicon glyphicon-heart" data-aos="flip-right"></i><span> ' + res.Likes + ' Likes</span>')
+                                    },
+                                    error: function (r) {
+                                        console.log(r)
+                                    }
+
+                                });
+                            })
+                        })
+
+                        $('.postimg').each(function () {
+                            this.src = $(this).attr('data-tempsrc')
+                            this.onload = function () {
+                                this.style.opacity = '1';
+                            }
+                        })
+
+                        scrollToAnchor(location.hash)
+
+                        start += 5;
+                        setTimeout(function () {
+                            working = false;
+                        }, 4000)
+
+                    },
+                    error: function (r) {
+                        console.log(r)
+                    }
+
+                });
+            }
+        }
+    })
+
     $(document).ready(function () {
 
         $.ajax({
 
             type: "GET",
-            url: "../api/profileposts?username=<?php echo $username?>",
+            url: "../api/profileposts?username=<?php echo $username?>&start=0",
             processData: false,
             contentType: "application/json",
             data: '',
@@ -299,7 +430,7 @@ if (isset($_GET['username'])) {
                             '<li class="list-group-item" id="' + posts[index].PostId + '">\n' +
                             '    <blockquote>\n' +
                             '        <p>' + posts[index].PostBody + '</p>\n' +
-                            '        <img src="" data-tempsrc="' + posts[index].PostImage + '" class="post-img" id="img' + posts[index].PostId + '">\n' +
+                            '        <img src="" data-tempsrc="' + posts[index].PostImage + '" class="postimg" id="img' + posts[index].PostId + '">\n' +
                             '        <footer>Posted by ' + posts[index].PostedBy + ' on ' + posts[index].PostDate + '\n' +
                             '            <button class="btn btn-default" type="button"\n' +
                             '                    style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;" data-id="' + posts[index].PostId + '">\n' +
@@ -364,7 +495,7 @@ if (isset($_GET['username'])) {
 
                 })
 
-                $('.post-img').each(function () {
+                $('.postimg').each(function () {
                     this.src = $(this).attr('data-tempsrc');
                     this.onload = function () {
                         this.style.opacity = '1';
@@ -372,6 +503,11 @@ if (isset($_GET['username'])) {
                 })
 
                 scrollToAnchor(location.hash);
+
+                start += 5;
+                setTimeout(function () {
+                    working = false;
+                }, 4000)
 
             },
             error: function (r) {
@@ -401,10 +537,15 @@ if (isset($_GET['username'])) {
     }
 
     function scrollToAnchor(aid) {
-        let aTag = $(aid);
-        $('html,body').animate({
-            scrollTop: aTag.offset().top
-        }, 1000, "linear");
+        try {
+            let aTag = $(aid);
+            $('html,body').animate({
+                scrollTop: aTag.offset().top
+            }, 1000, "linear");
+        } catch (e) {
+            console.log(e);
+        }
+
     }
 
 </script>

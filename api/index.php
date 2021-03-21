@@ -8,6 +8,20 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     if ($_GET['url'] == "auth") {
 
+    } else if ($_GET['url'] == "messages") {
+
+        $sender = $_GET['sender'];
+        $token = $_COOKIE['SNID'];
+        $receiver = $db->query('SELECT user_id FROM login_tokens WHERE token=:token', array(':token' => sha1($token)))[0]['user_id'];
+
+        $messages = $db->query('SELECT messages.id, messages.body, s.username AS Sender, r.username AS Receiver 
+                                FROM messages 
+                                LEFT JOIN users s ON messages.sender = s.id 
+                                LEFT JOIN users r ON messages.receiver = r.id 
+                                WHERE (r.id=:r AND s.id=:s) OR r.id=:s AND s.id=:r', array(':r' => $receiver, ':s' => $sender));
+
+        echo json_encode($messages);
+
     } else if ($_GET['url'] == "search") {
 
         $toSearch = explode(" ", $_GET['query']);
@@ -28,6 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         echo json_encode($posts);
 
     } else if ($_GET['url'] == "users") {
+
+        $token = $_COOKIE['SNID'];
+        $user_id = $db->query('SELECT user_id FROM login_tokens WHERE token=:token', array(':token' => sha1($token)))[0]['user_id'];
+        $username = $db->query('SELECT username FROM users WHERE id=:userid', array(':userid' => $user_id))[0]['username'];
+        echo $username;
 
     } else if ($_GET['url'] == "comments" && isset($_GET['postId'])) {
 
@@ -91,25 +110,26 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     } else if ($_GET['url'] == "profileposts") {
 
+        $start = (int)$_GET['start'];
         $userId = $db->query('SELECT id FROM users WHERE username=:username', array(':username' => $_GET['username']))[0]['id'];
+
+//        echo 'userid is' . $_GET['username'] . '<br>';
 
         $followingPosts = $db->query('SELECT posts.id, posts.body, posts.posted_at, posts.postimg, posts.likes, users.`username` FROM users, posts
                                      WHERE users.id = posts.user_id
                                      AND users.id = :userid
-                                     ORDER BY posts.posted_at DESC;', array(':userid' => $userId));
+                                     ORDER BY posts.posted_at DESC LIMIT 5 OFFSET ' . $start . ';', array(':userid' => $userId));
 
         $response = "[";
         foreach ($followingPosts as $post) {
 
             $response .= "{";
-
             $response .= '"PostId": ' . $post['id'] . ',';
             $response .= '"PostBody": "' . $post['body'] . '",';
             $response .= '"PostedBy": "' . $post['username'] . '",';
             $response .= '"PostDate": "' . $post['posted_at'] . '",';
             $response .= '"PostImage": "' . $post['postimg'] . '",';
             $response .= '"Likes": ' . $post['likes'] . '';
-
             $response .= "},";
 
 
@@ -118,13 +138,35 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         $response = substr($response, 0, strlen($response) - 1);
         $response .= "]";
 
+        http_response_code(200);
         echo $response;
 
     }
 
 } else if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-    if ($_GET['url'] == "users") {
+    $token = $_COOKIE['SNID'];
+
+    $userId = $db->query('SELECT user_id FROM login_tokens WHERE token=:token', array(':token' => sha1($token)))[0]['user_id'];
+
+    $postBody = file_get_contents("php://input");
+    $postBody = json_decode($postBody);
+
+    $body = $postBody->body;
+    $receiver = $postBody->receiver;
+
+    if (strlen($body) > 100) {
+        echo "{ 'Error': 'Message too long!' }";
+    }
+
+    $db->query("INSERT INTO messages VALUES(id, :body, :sender, :receiver, '0')", array(':body' => $body, ':sender' => $userId, ':receiver' => $receiver));
+
+    echo '{ "Success": "Message Sent!" }';
+
+    if ($_GET['url'] == "message") {
+
+
+    } else if ($_GET['url'] == "users") {
         $postBody = file_get_contents("php://input");
         $postBody = json_decode($postBody);
 
