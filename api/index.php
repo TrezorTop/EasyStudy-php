@@ -169,7 +169,11 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
 } else if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-    $token = $_COOKIE['SNID'];
+    if (isset($_COOKIE['SNID'])) {
+        $token = $_COOKIE['SNID'];
+    } else {
+        die();
+    }
 
     $userId = $db->query('SELECT user_id FROM login_tokens WHERE token=:token', array(':token' => sha1($token)))[0]['user_id'];
 
@@ -181,6 +185,15 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
 
     if (strlen($body) > 100) {
         echo "{ 'Error': 'Message too long!' }";
+    }
+    if ($body == null) {
+        $body = "";
+    }
+    if ($receiver == null) {
+        die();
+    }
+    if ($userId == null) {
+        die();
     }
 
     $db->query("INSERT INTO messages VALUES(id, :body, :sender, :receiver, '0')", array(':body' => $body, ':sender' => $userId, ':receiver' => $receiver));
