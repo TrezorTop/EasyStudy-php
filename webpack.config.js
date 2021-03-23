@@ -1,5 +1,6 @@
 const path = require( "path" );
 const isDev = process.env.NODE_ENV === "development";
+const isWatch = process.env.NODE_ENV === "watcher";
 
 const HTMLWebpackLoader = require( "html-webpack-plugin" );
 const { CleanWebpackPlugin } = require( "clean-webpack-plugin" );
@@ -7,6 +8,8 @@ const CopyWebpackPlugin = require( "copy-webpack-plugin" );
 
 const filename = ( ext ) => isDev ? `[name].${ ext }` : `[name].[contenthash].${ ext }`;
 const dirname = () => isDev ? "DeveloperBuild" : "ProductionBuild";
+
+const IsLiveServerMode = () => isWatch ? "index.html" : "index.php";
 
 module.exports = {
     mode: "development",
@@ -29,7 +32,7 @@ module.exports = {
     plugins: [
         new HTMLWebpackLoader( {
             template: path.resolve( __dirname, "source/_Frontend/Index/index.html" ),
-            filename: "main.php",
+            filename: `${ IsLiveServerMode() }`,
             minify: {
                 collapseWhitespace: !isDev
             },
@@ -45,7 +48,7 @@ module.exports = {
                     from: path.resolve( __dirname, "source/_Backend/pages/pageName.php" ),
                     to: path.resolve( __dirname, `dist/${ dirname() }/php`)
                 },
-                 */
+                */
                 {
                     from: path.resolve( __dirname, "source/_Backend/pages/index.php" ),
                     to: path.resolve( __dirname, `dist/${ dirname() }/php` )

@@ -10,7 +10,7 @@
   "scripts": {
     "buildProd": "cross-env NODE_ENV=production webpack --mode production",
     "buildDev": "cross-env NODE_ENV=development webpack --mode development",
-    "watch": "cross-env NODE_ENV=development webpack serve --mode development"
+    "watch": "cross-env NODE_ENV=watcher webpack serve --mode development"
   },
   "devDependencies": {
     "@babel/core": "^7.13.10",
