@@ -1,16 +1,4 @@
-<?php
-
-include $_SERVER['DOCUMENT_ROOT'] . '/classes/DB.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/classes/Login.php';
-
-if (Login::isLoggedIn()) {
-    $userId = Login::isLoggedIn();
-} else {
-    echo "Not logged in";
-}
-
-?>
-
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -27,6 +15,7 @@ if (Login::isLoggedIn()) {
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/untitled.css">
 </head>
+
 <body>
 <header class="hidden-sm hidden-md hidden-lg">
     <div class="searchbox">
@@ -56,10 +45,10 @@ if (Login::isLoggedIn()) {
     <nav class="navbar navbar-default hidden-xs navigation-clean">
         <div class="container">
             <div class="navbar-header"><a class="navbar-brand navbar-link" href="#"><i
-                            class="icon ion-ios-navigate"></i></a>
+                    class="icon ion-ios-navigate"></i></a>
                 <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"><span
-                            class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span
-                            class="icon-bar"></span><span class="icon-bar"></span></button>
+                        class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span
+                        class="icon-bar"></span><span class="icon-bar"></span></button>
             </div>
             <div class="collapse navbar-collapse" id="navcol-1">
                 <form class="navbar-form navbar-left">
@@ -104,40 +93,21 @@ if (Login::isLoggedIn()) {
     </nav>
 </div>
 <div class="container">
-    <h1>Notifications </h1></div>
+    <h1>My Messages</h1></div>
 <div>
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-3">
+                <ul class="list-group" id="users"></ul>
+            </div>
+            <div class="col-md-9" style="position:relative;">
                 <ul class="list-group">
-                    <?php
-
-                    if (DB::query('SELECT * FROM notifications WHERE receiver=:userid', array(':userid' => $userId))) {
-                        $notifications = DB::query('SELECT * FROM notifications WHERE receiver=:userid ORDER BY id DESC', array(':userid' => $userId));
-
-                        foreach ($notifications as $notification) {
-
-                            if ($notification['type'] == 1) {
-                                $senderName = DB::query('SELECT username FROM users WHERE id=:senderid', array(':senderid' => $notification['sender']))[0]['username'];
-
-                                if ($notification['extra'] == "") {
-                                    echo "You got a notification! ('extra' column is NULL) <hr>";
-                                } else {
-                                    $extra = json_decode($notification['extra']);
-                                    echo '<li class="list-group-item"><span>' . $senderName . " mentioned you in a post! - " . $extra->postbody . '</span></li>';
-
-                                }
-
-                            } else if ($notification['type'] == 2) {
-                                $senderName = DB::query('SELECT username FROM users WHERE id=:senderid', array(':senderid' => $notification['sender']))[0]['username'];
-                                echo '<li class="list-group-item"><span>' . $senderName . ' liked your post!</span></li>';
-                            }
-
-                        }
-                    }
-
-                    ?>
+                    <li class="list-group-item" id="m" style="overflow:auto;height:500px;margin-bottom:55px;"></li>
                 </ul>
+                <button class="btn btn-default msg-button-send" id="send-message" type="button">SEND</button>
+                <div class="message-input-div">
+                    <input id="message-content" type="text" style="width:100%;height:45px;outline:none;font-size:16px;">
+                </div>
             </div>
         </div>
     </div>
@@ -153,5 +123,115 @@ if (Login::isLoggedIn()) {
 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 <script src="assets/js/bs-animation.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.1.1/aos.js"></script>
+<script type="text/javascript">
+    SENDER = window.location.hash.split('#')[1];
+    USERNAME = "";
+
+    $(document).ready(function () {
+
+        $(window).on('hashchange', function () {
+            location.reload()
+        })
+
+        $('#send-message').click(function () {
+            $.ajax({
+
+                type: "POST",
+                url: "../api/message",
+                processData: false,
+                contentType: "application/json",
+                data: '{ "body": "' + $("#message-content").val() + '", "receiver": "' + SENDER + '" }',
+                success: function (r) {
+
+                    location.reload(); 
+
+                },
+                error: function (r) {
+
+                }
+
+            });
+        })
+
+        $.ajax({
+
+            type: "GET",
+            url: "../api/m_users",
+            processData: false,
+            contentType: "application/json",
+            data: '',
+            success: function (r) {
+
+                r = JSON.parse(r)
+                for (let i = 0; i < r.length; i++) {
+                    $('#users').append("<li id='user" + i + "' data-id='" + r[i].id + "' class=\"list-group-item\" style=\"background-color:#FFFFFF;\"><span style=\"font-size:16px;\"><img class=\"img-circle\" src=\"assets/img/photo.jpg\" style=\"width:32px;margin-right:5px;\"><strong>" + r[i].username + "</strong></span>\n</li>")
+                    $('#user' + i).click(function () {
+                        window.location = 'messages.html#' + $(this).attr('data-id');
+                    })
+                }
+            }
+
+        })
+
+        $.ajax({
+
+            type: "GET",
+            url: "../api/messages?sender=" + SENDER,
+            processData: false,
+            contentType: "application/json",
+            data: '',
+            success: function (r) {
+
+                r = JSON.parse(r);
+
+                $.ajax({
+
+                    type: "GET",
+                    url: "../api/users",
+                    processData: false,
+                    contentType: "application/json",
+                    data: '',
+                    success: function (u) {
+
+                        USERNAME = u;
+
+                        for (let i = 0; i < r.length; i++) {
+                            if (r[i].Sender === USERNAME) {
+
+                                $('#m').append(
+                                    '<div class="message-from-me message">\n' +
+                                    '    <p style="color: #FFF; padding: 10px;">' + r[i].body + '</p>\n' +
+                                    '</div>\n' +
+                                    '<div class="message-spacer message">\n' +
+                                    '    <p>' + r[i].body + '</p>\n' +
+                                    '</div>'
+                                )
+                            } else {
+
+                                $('#m').append(
+                                    '<div class="message-from-other message">\n' +
+                                    '    <p>' + r[i].body + '</p>\n' +
+                                    '</div>\n' +
+                                    '<div class="message-spacer message">\n' +
+                                    '    <p>' + r[i].body + '</p>\n' +
+                                    '</div>'
+                                )
+
+                            }
+                        }
+
+                    }
+                })
+
+
+            }, error: function (r) {
+
+                console.log(r);
+
+            }
+        })
+    })
+</script>
 </body>
+
 </html>
