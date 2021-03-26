@@ -1,0 +1,65 @@
+@mixin transition($type, $duration) {
+  transition: $type $duration !important;
+}
+
+@mixin Button(
+  // Задний фон
+  $background-color,
+  // Фон при наведении
+  $hover-color,
+  // Цвет текста
+  $text-color,
+  // Текст при наведении
+  $hover-text,
+  // Булево значение
+  $isBorder,
+  // Ширина границы               //? Опционально
+  $border-width,
+  // Цвет границы              //? Опционально
+  $border-color,
+  // Булево значение
+  $isBorder-radius,
+  // Закругление границ
+  $border-radius,
+  // Шрифт
+  $font,
+  // Размер шрифта
+  $font-size,
+  // Паддинги
+  $pt,
+  $pr,
+  $pb,
+  $pl
+) {
+  font-family: $font;
+  font-size: $font-size !important;
+  color: $text-color !important;
+  padding: $pt $pr $pb $pl;
+  @include transition(background-color, $transition);
+  @if $isBorder-radius == true {
+    border-radius: $border-radius;
+  }
+  @if $isBorder == false {
+    background-color: $background-color;
+  } @else {
+    border: $border-width solid $border-color;
+  }
+  &:hover {
+    cursor: pointer;
+    color: $hover-text !important;
+    background-color: $hover-color;
+    @if $isBorder == true {
+      border: $border-width solid $hover-color;
+    }
+  }
+}
+
+//? Резиновый шрифт, pcSize - размер шрифта в макете  mobSize - размер шрифта при минимальной ширине экрана (320px) $maxWidth - размер 'полотна' в макете (от края до края)
+//! размеры указывать без индентификатора (px)
+@mixin ResponsiveFont($pcSize, $mobSize, $maxWidth) {
+  $addSize: $pcSize - $mobSize;
+  $maxWidth: $maxWidth - 320;
+  font-size: calc(
+          #{$mobSize + px} + #{$addSize} * ((100vw - 320px) / #{$maxWidth})
+  );
+}
