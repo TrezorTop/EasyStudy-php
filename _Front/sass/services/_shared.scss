@@ -7,14 +7,98 @@
   text-decoration: none;
   list-style-type: none;
 }
+
 body {
   background-color: #821aad;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
-/* CLASSES */
+
 .container {
   max-width: 1200px;
   width: 100%;
   height: 100%;
   margin: 0 auto;
 }
-/* CLASSES */
+
+.FillScreen {
+  flex-grow: 1;
+}
+
+.checkbox {
+  label {
+    display: inline-flex !important;
+    align-items: center;
+    user-select: none;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    input {
+      position: absolute;
+      width: 0 !important;
+      z-index: -1;
+      opacity: 0;
+
+      &:checked ~ span {
+        background-color: darken($input-bgc, 4%);
+      }
+
+      &:checked ~ span::after {
+        content: '\2714';
+        color: $textPrimary;
+        position: absolute;
+        font-size: .8rem;
+        right: .5px;
+        top: 0;
+      }
+    }
+
+    span {
+      content: '';
+      position: relative;
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      background-color: $input-bgc;
+      border-radius: $border-radius;
+      border: solid 1px rgba(gray, .4);
+    }
+
+    p {
+      font-size: .8rem;
+      color: $textParagraph;
+      margin-left: .8rem;
+    }
+  }
+}
+
+%GreenButton {
+  font-size: .8rem;
+  color: white;
+  padding: 0.5rem 1.1rem;
+  border-radius: $border-radius;
+  background: rgb(7, 201, 124);
+  background: linear-gradient(180deg, rgba(7, 201, 124, 1) 0%, rgba(6, 176, 109, 1) 100%);
+
+  &:hover {
+    cursor: pointer;
+    background: rgb(7, 201, 124);
+    background: linear-gradient(180deg, rgba(6, 176, 109, 1) 0%, rgba(6, 176, 109, 1) 100%);
+  }
+}
+
+%Input {
+  width: 100%;
+  padding: .8rem;
+  background-color: $input-bgc;
+  border-radius: $border-radius;
+  border: solid 1px rgba(gray, .4);
+  font-size: .9rem;
+
+  &:focus {
+    outline: none;
+  }
+}

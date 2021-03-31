@@ -1,0 +1,88 @@
+@use "../services/services";
+
+
+main {
+  padding: 5rem 1%;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  justify-content: center;
+
+  section {
+    padding: 4% 7%;
+    background-color: white;
+    border-radius: services.$border-radius;
+
+    form {
+      display: flex;
+      flex-direction: column;
+
+      .Inputs {
+        article {
+          margin: 3% 0;
+
+          label {
+            display: grid;
+            grid-template-columns: .23fr 1fr;
+
+            div {
+              display: flex;
+              align-items: center;
+
+              p {
+                color: services.$textParagraph;
+                font-size: .8rem;
+              }
+
+              span {
+                color: darken(red, 7%);
+                margin-left: 3%;
+                font-size: 1rem;
+                position: relative;
+                top: -0.222rem;
+              }
+            }
+
+            input {
+              @extend %Input;
+              transition: border services.$inputTransition;
+
+              &:focus {
+                border-color: rgba(gray, 1);
+              }
+            }
+          }
+
+          #Asteriks {
+            span {
+              color: services.$textParagraph;
+              font-size: .8rem;
+            }
+          }
+
+          #Button {
+            button {
+              border: none;
+              justify-self: start;
+              @extend %GreenButton;
+              padding: 2% 2%;
+              text-transform: uppercase;
+            }
+          }
+
+          #Checkbox {
+            .checkbox {
+              label {
+                span {
+                  margin-left: unset;
+                  top: unset;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

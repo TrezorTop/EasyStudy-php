@@ -98,102 +98,17 @@ body {
   margin-left: 0.8rem;
 }
 
-main .card form .DataInput .submit button {
-  font-size: 0.8rem;
-  color: white;
-  padding: 0.5rem 1.1rem;
-  border-radius: 5px;
-  background: #07c97c;
-  background: linear-gradient(180deg, #07c97c 0%, #06b06d 100%);
-}
-main .card form .DataInput .submit button:hover {
-  cursor: pointer;
-  background: #07c97c;
-  background: linear-gradient(180deg, #06b06d 0%, #06b06d 100%);
-}
-
-main .card form .DataInput .data input {
-  width: 100%;
-  padding: 0.8rem;
-  background-color: #F5F6F7;
-  border-radius: 5px;
-  border: solid 1px rgba(128, 128, 128, 0.4);
-  font-size: 0.9rem;
-}
-main .card form .DataInput .data input:focus {
-  outline: none;
-}
-
-main {
-  padding: 5rem 1%;
-  display: grid;
-  grid-template-columns: 1fr 0.9fr;
-  gap: 15%;
-}
-main .info h1 {
-  font-size: 3rem;
-  text-transform: uppercase;
-  color: white;
-  font-weight: lighter;
-}
-main .info p {
-  font-size: 1.3rem;
-  color: white;
-  font-weight: lighter;
-}
-main .card {
-  background-color: white;
-  padding: 15% 13%;
-  border-radius: 5px;
-}
-main .card form .description {
+footer {
+  background-color: #182024;
+  padding: 2% 0;
+  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
-  text-align: center;
+  justify-content: center;
+  align-items: center;
 }
-main .card form .description h2 {
-  text-transform: uppercase;
-  font-size: 1.3rem;
-  color: #182024;
-}
-main .card form .description p {
-  margin: 2rem 0;
-  color: #666666;
-}
-main .card form .DataInput .data {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-}
-main .card form .DataInput .data input {
-  transition: box-shadow 0.3s;
-}
-main .card form .DataInput .data input:focus {
-  -webkit-box-shadow: 0 10px 52px 0 rgba(128, 128, 128, 0.4);
-  box-shadow: 0 10px 52px 0 rgba(128, 128, 128, 0.4);
-}
-main .card form .DataInput .settings {
-  margin: 1.4rem 0;
-  display: flex;
-  justify-content: space-between;
-}
-main .card form .DataInput .settings a {
-  font-size: 0.8rem;
-  color: #4743D8;
-}
-main .card form .DataInput .settings a:hover {
-  text-decoration: underline;
-}
-main .card form .DataInput .submit button {
-  width: 100%;
-  border: none;
-  text-transform: uppercase;
-  padding: 4% 0;
-  background: #5c58dc;
-  background: linear-gradient(180deg, #5c58dc 0%, #4743d8 100%);
-}
-main .card form .DataInput .submit button:hover {
-  background: linear-gradient(180deg, #4743d8 0%, #4743d8 100%);
+footer h2 {
+  color: white;
+  font-size: 0.7rem;
 }
 
 /*# sourceMappingURL=style.css.map */

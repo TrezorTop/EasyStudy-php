@@ -1,37 +1,18 @@
 <!DOCTYPE html>
-<html lang = "en">
+<html lang="ru">
 <head>
-    <meta charset = "UTF-8">
-    <title>Title</title>
-    <link rel = "stylesheet" href = "node_modules/normalize.css/normalize.css">
-    <link rel = "stylesheet" href = "sass/main/style.css">
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="node_modules/normalize.css/normalize.css">
+    <link rel="stylesheet" href="sass/Login_Create-navbar/style.css">
+    <link rel="stylesheet" href="sass/Footer/style.css">
+    <link rel="stylesheet" href="sass/main/style.css">
+    <script src="w3.js"></script>
 </head>
 <body>
-    <header>
-        <div class = "navbar">
-            <div class = "logo">
-                <a href = "#">Social Network</a>
-            </div>
-            <nav>
-                <ul>
-                    <li><a class = "StandardButton buttons" href = "#">Home</a></li>
-                    <li><a class = "StandardButton buttons" href = "#">Pages</a></li>
-                    <li><a class = "StandardButton buttons" href = "#">Videos</a></li>
-                    <li><a class = "StandardButton buttons" href = "#">JomSocial</a></li>
-                    <li><a class = "StandardButton buttons" href = "#">EasySocial</a></li>
-                    <li><a class = "StandardButton buttons" href = "#">Blogs</a></li>
-                </ul>
-            </nav>
-            <div class = "controlPanel">
-                <a class = "StandardButton buttons" href = "#">Sign In</a>
-                <a id = "CreateAccount" class = "buttons" href = "#">Create Account</a>
-            </div>
-        </div>
-
-        <hr>
-    </header>
-    <main class="container">
-        <div class = "info">
+    <div w3-include-html="pages/Login_Create-navbar.html"></div>
+    <main class="container FillScreen">
+        <div class="info">
             <h1>
                 play & share music with mood community
             </h1>
@@ -40,37 +21,39 @@
                 Nulla ligula facilisi. Nullam auctor nunc ut nisi non semper aliquam.
             </p>
         </div>
-        <div class = "card">
-            <form action = "">
-                <div class = "description">
+        <div class="card">
+            <form action="">
+                <div class="description">
                     <h2>sign in social network</h2>
                     <p>Donec venenatis, nisi non semper venenatis elt purus semper erat, in consectetur velit usto nec
-                       diam.</p>
+                        diam.
+                    </p>
                 </div>
-
-                <div class = "DataInput">
-                    <div class = "data">
-                        <input type = "text" placeholder = "Username" required>
-                        <input type = "password" placeholder = "Password" required>
+                <div class="DataInput">
+                    <div class="data">
+                        <input type="text" placeholder="Username" required>
+                        <input type="password" placeholder="Password" required>
                     </div>
-
-                    <div class = "settings">
+                    <div class="settings">
                         <div class="checkbox">
-                            <label for = "check">
-                                <input type = "checkbox" id = "check">
+                            <label for="check">
+                                <input type="checkbox" id="check">
                                 <span></span>
                                 <p>Remember Me</p>
                             </label>
                         </div>
-                        <a href = "#">Forgot Password?</a>
+                        <a href="#">Forgot Password?</a>
                     </div>
-
-                    <div class = "submit">
-                        <button type = "submit">log in</button>
+                    <div class="submit">
+                        <button type="submit">log in</button>
                     </div>
                 </div>
             </form>
         </div>
     </main>
+    <div w3-include-html="pages/Footer.html"></div>
+    <script>
+        w3.includeHTML();
+    </script>
 </body>
 </html>

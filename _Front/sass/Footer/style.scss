@@ -1,0 +1,17 @@
+@use "../services/services";
+
+
+footer {
+  background-color: services.$footer;
+  padding: 2% 0;
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  h2 {
+    color: white;
+    font-size: .7rem;
+  }
+}

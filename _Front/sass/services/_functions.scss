@@ -1,8 +1,0 @@
-@function SetHover($color, $type, $percentage) {
-    @if $type == dark {
-        @return darken($color, $percentage);
-    }
-    @else if $type == light  {
-        @return lighten($color, $percentage)
-    }
-}

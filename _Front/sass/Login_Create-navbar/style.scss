@@ -1,0 +1,59 @@
+@use "../services/services";
+
+
+header {
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 1.7rem;
+    padding: 2rem 0;
+
+    .logo {
+      a {
+        font-weight: bold;
+        font-size: .9rem;
+        color: white;
+      }
+    }
+
+    nav {
+      ul {
+        display: flex;
+        align-items: center;
+        gap: .4rem;
+      }
+    }
+
+    .buttons {
+      text-transform: uppercase;
+    }
+
+    .StandardButton {
+      background-color: transparent;
+      font-size: .7rem;
+      color: white;
+      padding: 0.5rem 1.1rem;
+      border-radius: services.$border-radius;
+      transition: background-color services.$transition;
+
+
+      &:hover {
+        cursor: pointer;
+        background-color: rgba(gray, .4),;
+      }
+    }
+
+    #CreateAccount {
+      margin-left: 0.833rem;
+      @extend %GreenButton;
+    }
+  }
+
+  hr {
+    border: none;
+    color: red;
+    background-color: rgba(white, .1);
+    height: 2px;
+  }
+}

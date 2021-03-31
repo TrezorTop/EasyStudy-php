@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create a new account</title>
+    <link rel="stylesheet" href="../node_modules/normalize.css/normalize.css">
+    <link rel="stylesheet" href="../sass/Footer/style.css">
+    <link rel="stylesheet" href="../sass/Login_Create-navbar/style.css">
+    <link rel="stylesheet" href="../sass/CreateAccount/style.css">
+    <script src="../w3.js"></script>
+</head>
+<body>
+    <div w3-include-html="Login_Create-navbar.html"></div>
+    <main class="container FillScreen">
+        <section>
+            <form action="">
+                <div class="Heading">
+                    <h1>Register</h1>
+                </div>
+                <div class="Inputs">
+                    <article>
+                        <label for="Name">
+                            <div>
+                                <p>Name</p>
+                                <span>*</span>
+                            </div>
+                            <input type="text" id="Name">
+                        </label>
+                    </article>
+                    <article>
+                        <label for="Username">
+                            <div>
+                                <p>Username</p>
+                                <span>*</span>
+                            </div>
+                            <input type="text" id="Username">
+                        </label>
+                    </article>
+                    <article>
+                        <label for="Email">
+                            <div>
+                                <p>Email</p>
+                                <span>*</span>
+                            </div>
+                            <input type="email" id="Email">
+                        </label>
+                    </article>
+                    <article>
+                        <label for="Password">
+                            <div>
+                                <p>Password</p>
+                                <span>*</span>
+                            </div>
+                            <input type="password" autocomplete="off" id="Password">
+                        </label>
+                    </article>
+                    <article>
+                        <label for="Verify Password">
+                            <div>
+                                <p>Verify Password</p>
+                                <span>*</span>
+                            </div>
+                            <input type="password" autocomplete="off" id="Verify Password">
+                        </label>
+                    </article>
+                    <article>
+                        <label id="Asteriks">
+                            <div>
+                                <p></p>
+                                <span></span>
+                            </div>
+                            <span class="require">Fields marked with an asterisk (*) are required.</span>
+                        </label>
+                    </article>
+                    <article>
+                        <label id="Button">
+                            <div>
+                                <p></p>
+                                <span></span>
+                            </div>
+                            <button type="submit">Register Me</button>
+                        </label>
+                    </article>
+                    <article>
+                        <label id="Checkbox">
+                            <div>
+                                <p></p>
+                                <span></span>
+                            </div>
+                            <div class="checkbox">
+                                <label for="check">
+                                    <input type="checkbox" id="check">
+                                    <span></span>
+                                    <p>I agree to consent to Social Network collecting my details.</p>
+                                </label>
+                            </div>
+                        </label>
+                    </article>
+                </div>
+            </form>
+        </section>
+    </main>
+    <div w3-include-html="Footer.html"></div>
+    <script>
+        w3.includeHTML();
+    </script>
+</body>
+</html>
